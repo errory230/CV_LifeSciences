@@ -79,7 +79,18 @@ except Exception:
     code("""
 import os, sys, subprocess
 
-# MD stack (AmberTools for tleap solvation, OpenMM engine, analysis libs)
+# condacolab sometimes pins a python version (e.g. 3.12) that does not match the
+# python it actually installed (e.g. 3.11), which makes `mamba install` refuse to
+# run ("Your pinning does not match what's currently installed"). Realign the pin
+# to the RUNNING interpreter so the solver keeps python fixed and installs
+# compatible builds.
+pin = f"python {sys.version_info.major}.{sys.version_info.minor}.*"
+with open("/usr/local/conda-meta/pinned", "w") as fh:
+    fh.write(pin + "\\n")
+print("aligned conda pin ->", pin)
+
+# MD stack (AmberTools for tleap solvation, OpenMM engine, analysis libs).
+# Unpinned versions so the solver picks builds matching Colab's python.
 !mamba install -q -y -c conda-forge openmm ambertools mdtraj mdanalysis scikit-learn matplotlib
 
 # Get the code + prep hand-off files. For a PRIVATE repo, add a Colab secret
