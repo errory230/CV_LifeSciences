@@ -65,41 +65,54 @@ CONFIG = dict(
 )
 """),
 
-    md("## 2 · Setup — condacolab\n`condacolab.install()` **restarts the kernel** (expected). Run this cell alone, wait for the restart, then continue from the next cell. Skip it if `conda` is already present."),
+    md("""## 2 · Setup — AmberTools (`tleap` binary) via condacolab
+
+We need conda **only** for the `tleap` binary that solvation calls as a
+subprocess — OpenMM itself is installed with pip in the next cell. `condacolab`
+provides conda; its `install()` **restarts the kernel** (expected). Run this cell
+alone, wait for the restart, then continue."""),
     code("""
 try:
     import condacolab; condacolab.check()
-    print("condacolab already installed")
+    print("conda already present")
 except Exception:
     !pip -q install condacolab
     import condacolab; condacolab.install()   # kernel restarts here
 """),
 
-    md("## 3 · Setup — packages + code\nInstall the MD stack from conda-forge (AmberTools gives `tleap`; OpenMM is the engine) and get the `ensemble_qsar` package + the prep hand-off files. The repo is the simplest source of both."),
-    code("""
-import os, sys, glob, subprocess
+    md("""## 3 · Setup — packages + code
 
-# condacolab often leaves a python pin (e.g. 3.12) that does NOT match the python
-# it actually installed (e.g. 3.11), so `mamba install` aborts:
-#   "Your pinning does not match what's currently installed".
-# The pin can live in the pinned FILE and/or condarc's pinned_packages, so clear
-# both, then install with python fixed to the running version.
-pyv = f"{sys.version_info.major}.{sys.version_info.minor}"
+**Design:** OpenMM + analysis libs are installed with **pip** so they import into
+*this* Colab kernel (avoids condacolab's conda-vs-kernel python mismatch — the
+cause of `No module named 'openmm'`). **AmberTools** is installed with conda only
+for the `tleap` **binary**, which solvation runs via subprocess, so its python
+version is irrelevant. OpenMM's pip wheel ships the CUDA platform and uses
+Colab's GPU driver directly."""),
+    code("""
+import os, sys, glob, subprocess, shutil
+
+# --- clear condacolab's python pin (file + condarc) so conda installs proceed ---
 for f in glob.glob("/usr/local/conda-meta/pinned"):
-    os.remove(f); print("removed pinned file:", f)
+    os.remove(f)
 for scope in ("", "--system"):
     subprocess.run(f"conda config {scope} --remove-key pinned_packages", shell=True)
-print("--- remaining pins (should be empty) ---")
-subprocess.run("conda config --show pinned_packages 2>/dev/null; "
-               "cat /usr/local/conda-meta/pinned 2>/dev/null", shell=True)
 
-# MD stack (AmberTools -> tleap; OpenMM engine; analysis libs). Force python to
-# the running version so nothing tries to upgrade/downgrade it. mamba, or conda.
-print(f"installing (python={pyv} fixed) — a few minutes ...")
-pkgs = f"python={pyv}.* openmm ambertools mdtraj mdanalysis scikit-learn matplotlib"
-rc = os.system(f"mamba install -y -c conda-forge {pkgs} || "
-               f"conda install -y -c conda-forge {pkgs}")
-print("install exit code:", rc)
+# --- AmberTools: we use only the `tleap` binary (subprocess), so a conda/kernel
+#     python mismatch does not matter here. ---
+if shutil.which("tleap") is None:
+    print("installing ambertools (for tleap) — a few minutes ...")
+    os.system("mamba install -y -c conda-forge ambertools || "
+              "conda install -y -c conda-forge ambertools")
+print("tleap:", shutil.which("tleap") or "NOT FOUND")
+
+# --- OpenMM + analysis libs via PIP -> import into THIS kernel ---
+!pip -q install openmm mdtraj mdanalysis scikit-learn matplotlib parmed
+
+import openmm, mdtraj, sklearn
+plats = [openmm.Platform.getPlatform(i).getName() for i in range(openmm.Platform.getNumPlatforms())]
+print("openmm", openmm.__version__, "| platforms:", plats)
+if "CUDA" not in plats:
+    print("WARNING: no CUDA platform — set runtime to GPU (Runtime > Change runtime type).")
 
 # Get the code + prep hand-off files. For a PRIVATE repo, add a Colab secret
 # named GITHUB_TOKEN (key icon on the left) with repo read scope.
@@ -118,10 +131,9 @@ if not os.path.isdir("/content/CV_LifeSciences"):
                     "/content/CV_LifeSciences"], check=True)
 sys.path.insert(0, "/content/CV_LifeSciences")
 
-import openmm, mdtraj, sklearn
 from ensemble_qsar.md.config import MDConfig
 from ensemble_qsar.md import io, solvate, simulate, analyze, pipeline
-print("openmm", openmm.__version__, "| mdtraj", mdtraj.__version__)
+print("code + prep hand-off ready under /content/CV_LifeSciences")
 """),
 
     md("## 4 · Google Drive (optional but recommended)\nStore outputs on Drive so a disconnect doesn't lose the trajectory/checkpoints. Prep inputs are read from the cloned repo by default; point `input_root` at Drive instead if your prep outputs live there."),
