@@ -1,0 +1,116 @@
+{
+  "mol_id": "228-Raffinose",
+  "smiles": "OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O",
+  "path": "/home/user/CV_LifeSciences/data/prep/228-Raffinose",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=0",
+    "largest_ring=6",
+    "class=small_molecule (rule: residues>=3 -> peptide)",
+    "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+  ],
+  "needs_review": true,
+  "ph": 7.4,
+  "protonation_state": "OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O",
+  "net_charge": 0,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": true,
+        "n_residues": 0,
+        "n_amide_bonds": 0,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": true,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=0",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)",
+          "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O",
+        "net_charge": 0,
+        "variants": [
+          "OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O"
+        ],
+        "note": "single microstate"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/228-Raffinose/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 294.8907,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 17
+      }
+    },
+    {
+      "name": "charges",
+      "status": "ok",
+      "seconds": 44.454,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/228-Raffinose/intermediates/ligand.mol2"
+      ],
+      "info": {
+        "method": "AM1-BCC (antechamber/sqm)"
+      }
+    },
+    {
+      "name": "parameterize",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/228-Raffinose/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/228-Raffinose/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/228-Raffinose/intermediates/leap_solvate.in"
+      ],
+      "info": {
+        "messages": []
+      }
+    }
+  ],
+  "handoff_files": [
+    "ligand.mol2",
+    "ligand.frcmod",
+    "ligand_gas.prmtop",
+    "ligand_gas.rst7",
+    "ligand_ref.pdb",
+    "leap_solvate.in",
+    "ligand.sdf"
+  ]
+}

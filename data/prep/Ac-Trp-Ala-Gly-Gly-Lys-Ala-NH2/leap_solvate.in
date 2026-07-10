@@ -1,0 +1,9 @@
+# Run on the GPU host to build the solvated peptide system.
+source leaprc.protein.ff19SB
+source leaprc.water.tip3p
+pep = sequence { ACE TRP ALA GLY GLY LYS ALA NHE }
+solvateBox pep TIP3PBOX 12.0
+addions pep Cl- 0
+saveamberparm pep peptide_solv.prmtop peptide_solv.rst7
+savepdb pep peptide_solv.pdb
+quit
