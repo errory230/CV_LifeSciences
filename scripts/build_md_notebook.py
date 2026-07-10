@@ -105,8 +105,14 @@ if shutil.which("tleap") is None:
               "conda install -y -c conda-forge ambertools")
 print("tleap:", shutil.which("tleap") or "NOT FOUND")
 
-# --- OpenMM + analysis libs via PIP -> import into THIS kernel ---
-!pip -q install openmm mdtraj mdanalysis scikit-learn matplotlib parmed
+# --- OpenMM + analysis libs via PIP into THIS KERNEL's python. Use
+#     `sys.executable -m pip`, NOT `!pip`: after condacolab, `!pip` can resolve
+#     to a different python than the kernel, so packages install where the kernel
+#     cannot see them (the real cause of `No module named 'openmm'`). ---
+print("kernel python:", sys.executable, "|", sys.version.split()[0])
+subprocess.run([sys.executable, "-m", "pip", "install", "-q",
+                "openmm", "mdtraj", "mdanalysis", "scikit-learn", "matplotlib", "parmed"],
+               check=True)
 
 import openmm, mdtraj, sklearn
 plats = [openmm.Platform.getPlatform(i).getName() for i in range(openmm.Platform.getNumPlatforms())]
