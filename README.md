@@ -79,11 +79,25 @@ python scripts/01_build_poc_dataset.py --datasets caco2_wang --n-select 80
 python tests/test_pipeline.py                          # offline sanity checks
 ```
 
+## Stage 2a — CPU MD prep (implemented)
+
+Turns each selected molecule into a **parameterized, GPU-ready MD input** using
+only CPU — conformer generation, pH protonation, AM1-BCC/GAFF2 (or ff19SB for
+peptides) parameterization — and hands off a dry system plus a `leap_solvate.in`
+recipe for the GPU stage. Class-aware routing (peptide vs small molecule) with
+review flags. See [`docs/PREP.md`](docs/PREP.md).
+
+```bash
+bash scripts/setup_conda_env.sh && conda activate mdsprep
+python scripts/02_prep_molecule.py --from-validation T1_smoke
+python scripts/03_prep_batch.py --input data/validation_subset.csv
+```
+
 ## Roadmap
 
-See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data) is done; next is the
-MD + conformer-extraction stage, then ensemble descriptors and the
-ensemble-vs-static comparison.
+See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data) and Stage 2a (CPU prep)
+are done; next is Stage 2b (GPU MD + conformer extraction), then ensemble
+descriptors and the ensemble-vs-static comparison.
 
 ## Repository layout
 

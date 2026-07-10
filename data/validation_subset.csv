@@ -1,0 +1,7 @@
+tier,mol_id,smiles,mw,rot,rings,largest_ring,macro,tpsa,clogp,flex,tests,reason
+T1_smoke,-,c1ccncc1,79.102,0,1,6,0,12.89,1.082,rigid,end-to-end 흐름 최소검증,가장 단순: 강체·회전결합0·소형·정상물성. 전체 흐름 한 바퀴 도는지 확인
+T2_conformer,1,Cc1cc(COc2ccc(C(=O)N[C@@H]3CC4(C[C@@H]3C(=O)NO)OCCO4)cc2)c2ccccc2n1,477.517,6,5,6,0,119.01,2.879,flexible,컨포머 생성·샘플링,중간 유연성: 회전결합~6. 컨포머 앙상블이 제대로 붙는지 검증
+T3_macrocycle,SDZ-RAD,CO[C@H]1C[C@@H]2CC[C@@H](C)[C@@](O)(O2)C(=O)C(=O)N2CCCC3[C@H]2C(=O)O[C@@H](CC(=O)[C@H](C)/C=C(\C)[C@@H](O)[C@@H](OC)C(=O)[C@H](C)CC[C@H](C)/C=C/C=C/C=C/1C)[C@H]3C[C@@H]1CC[C@@H](OCCO)[C@H](OC)C1,956.224,8,5,30,1,204.66,5.807,flexible,고리화 토폴로지 처리,매크로사이클: 최대고리. prep에서 가장 깨지기 쉬운 고리 토폴로지 테스트
+T3_flexible_max,Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2,CC(=O)N[C@@H](Cc1c[nH]c2ccccc12)C(=O)N[C@@H](C)C(=O)NCC(=O)NCC(=O)N[C@@H](CCCCN)C(=O)N[C@@H](C)C(N)=O,629.719,18,2,6,0,259.5,-2.444,very_flexible,고차원 컨포머 공간,최다 회전결합. 샘플링 폭발/수렴 실패 지점 테스트
+T3_polar_extreme,228-Raffinose,OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O,504.438,8,3,6,0,268.68,-7.571,flexible,solvation(친수극단),TPSA 최대·HBD/HBA 다수. 물박스/전하 세팅 스트레스
+T3_lipophilic_extreme,Bis(7)-tacrine (B7T),c1ccc2c(NCCCCCCCNc3c4c(nc5ccccc35)CCCC4)c3c(nc2c1)CCCC3,492.711,10,6,6,0,49.84,8.015,very_flexible,solvation(소수극단),clogP 최대. 소수성 분자 물환경 안정성 테스트

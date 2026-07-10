@@ -28,20 +28,34 @@ summary.json}`.
   ensemble hypothesis. A dedicated macrocycle/peptide set (e.g. CycPeptMPDB)
   is a strong candidate for a stage-3 stress test.
 
-## Stage 2 — Conformer ensembles via solvent MD (next)
+## Stage 2 — Conformer ensembles via solvent MD
 
-- [ ] Parametrize each representative molecule (e.g. OpenFF / GAFF), assign
-      protonation state at a **configurable pH** (Dimorphite-DL / pKa model).
-- [ ] Solvate (explicit water; optional co-solvent / ions), equilibrate, run
-      production MD (OpenMM).
-- [ ] Extract conformers by two strategies the user specified:
-      (a) **time-uniform** — one frame per fixed interval; and
-      (b) **stability-triggered** — sample once RMSD/energy has plateaued.
-- [ ] Cluster conformers (RMSD) to a compact, weighted representative ensemble.
-- [ ] Persist ensembles + provenance (force field, solvent, pH, sampling rule).
+Split by hardware: prep is CPU-only and completes here; dynamics needs a GPU.
+
+### Stage 2a — CPU prep (SMILES → GPU-ready parameters) ✅ implemented
+See [`PREP.md`](PREP.md). `ensemble_qsar/prep/` + `scripts/02_prep_molecule.py`,
+`scripts/03_prep_batch.py`.
+- [x] conda env with AmberTools (`environment.yml`, `setup_conda_env.sh`).
+- [x] class routing (peptide vs small molecule) with review flags + evidence.
+- [x] protonation at configurable pH (Dimorphite-DL; peptide library states).
+- [x] ETKDG conformer + MMFF minimization.
+- [x] AM1-BCC charges + GAFF2 (`mol2`+`frcmod`) / ff19SB peptide build.
+- [x] dry, solvation-ready handoff + `leap_solvate.in` + provenance manifest.
+- [x] fail-soft batch driver; validated on the 6-molecule validation set.
+
+### Stage 2b — GPU MD (next, off this environment)
+- [ ] Run `leap_solvate.in` → solvate (explicit water; optional co-solvent/ions).
+- [ ] Equilibrate + production MD (OpenMM) on GPU.
+- [ ] Extract conformers two ways the user specified: (a) **time-uniform** —
+      one frame per fixed interval; (b) **stability-triggered** — sample once
+      RMSD/energy has plateaued.
+
+### Stage 2c — CPU analysis (return trip)
+- [ ] Align trajectory (RMSD), PCA over Cartesian/torsion space, cluster to a
+      compact weighted ensemble; persist ensembles + provenance.
 
 Design note: MD is the expensive step, which is why stage 1 selects a small,
-flexibility-balanced subset rather than the full dataset.
+flexibility-balanced subset and stage 2a keeps solvation off the CPU box.
 
 ## Stage 3 — Ensemble descriptors & QSAR
 

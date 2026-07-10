@@ -1,0 +1,28 @@
+# Stage 2a — CPU molecular-dynamics PREP environment.
+#
+# Everything needed to go SMILES -> parameterized, GPU-ready input WITHOUT a GPU:
+# conformer generation, minimization, pH protonation, AM1-BCC charges and
+# GAFF2 / protein-force-field parameterization. The actual solvation +
+# equilibration + production MD happen later in a GPU environment.
+#
+# Reproduce with:
+#   bash scripts/setup_conda_env.sh
+# (installs Miniconda if absent, then `conda env create -f environment.yml`)
+name: mdsprep
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - ambertools=22        # antechamber (AM1-BCC via sqm), parmchk2, tleap
+  - openmm=8             # target engine; used here only to validate systems
+  - rdkit                # ETKDG conformers, MMFF minimization, classification
+  - parmed               # AMBER topology inspection / conversion
+  - mdtraj               # trajectory/topology handling (analysis stage)
+  - pdb2pqr              # peptide protonation at target pH
+  - propka               # pKa prediction backing pdb2pqr
+  - numpy
+  - pandas
+  - scikit-learn         # PCA / clustering in the later analysis stage
+  - pip
+  - pip:
+      - dimorphite-dl    # small-molecule protonation enumeration at target pH

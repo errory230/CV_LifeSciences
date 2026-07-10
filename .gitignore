@@ -15,6 +15,14 @@ data/raw/
 data/processed/**/*.parquet
 data/processed/**/curated.csv
 
+# Stage 2a prep: keep the per-molecule handoff files + manifests + batch report,
+# but drop the regenerable antechamber/tleap debug scratch.
+data/prep/**/intermediates/
+data/prep/_errors/
+
+# Local conda install (bootstrapped by scripts/setup_conda_env.sh)
+miniconda3/
+
 # Future MD stage artefacts (trajectories are large)
 data/md/
 *.dcd
