@@ -87,6 +87,14 @@ def analyze(traj_path, prmtop_path, ref_pdb, out_dir: Path, cfg) -> AnalysisResu
     top = traj.topology
     heavy = top.select("element != H")
 
+    # Make the solute whole across periodic boundaries before alignment, so a
+    # molecule imaged across the box edge in a frame does not appear as a huge
+    # RMSD/PCA jump. Harmless for already-whole frames.
+    try:
+        traj.image_molecules(inplace=True)
+    except Exception as e:  # noqa: BLE001
+        warnings.append(f"image_molecules skipped ({e})")
+
     # --- alignment to the prep reference (fallback: first frame) -----------
     ref = None
     if ref_pdb and Path(ref_pdb).exists():
