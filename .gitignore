@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Raw downloaded mirrors (reproducible via scripts/01_build_poc_dataset.py)
+data/raw/
+
+# Regenerable full build artefacts (rerun scripts/01_build_poc_dataset.py).
+# The small representative_set.csv + summary.json ARE committed as the
+# stage-1 deliverable snapshot.
+data/processed/**/*.parquet
+data/processed/**/curated.csv
+
+# Future MD stage artefacts (trajectories are large)
+data/md/
+*.dcd
+*.xtc
+*.trr

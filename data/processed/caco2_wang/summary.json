@@ -1,0 +1,35 @@
+{
+  "dataset": "caco2_wang",
+  "endpoint": "caco2_permeability",
+  "task": "regression",
+  "label_unit": "log10 Papp (cm/s)",
+  "source_url": "https://raw.githubusercontent.com/RekerLab/MolALKit/main/molalkit/data/datasets/caco2_wang.csv",
+  "provenance": "Wang et al. J Chem Inf Model 2016; TDC 'Caco2_Wang' (n~910). Mirror: RekerLab/MolALKit.",
+  "curation": {
+    "n_input": 910,
+    "n_unparseable": 0,
+    "n_no_carbon": 0,
+    "n_disallowed_element": 0,
+    "n_standardize_failed": 0,
+    "n_duplicate_records": 14,
+    "n_output": 896
+  },
+  "n_curated": 896,
+  "flex_class_counts": {
+    "flexible": 307,
+    "moderate": 227,
+    "rigid": 212,
+    "very_flexible": 150
+  },
+  "n_beyond_ro5": 261,
+  "n_macrocycle": 81,
+  "label_min": -7.7600002,
+  "label_max": -3.51,
+  "n_representative": 100,
+  "representative_flex_counts": {
+    "flexible": 30,
+    "very_flexible": 30,
+    "moderate": 25,
+    "rigid": 15
+  }
+}

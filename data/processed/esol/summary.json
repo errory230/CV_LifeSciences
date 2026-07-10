@@ -1,0 +1,35 @@
+{
+  "dataset": "esol",
+  "endpoint": "aqueous_solubility",
+  "task": "regression",
+  "label_unit": "log10 S (mol/L)",
+  "source_url": "https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv",
+  "provenance": "Delaney J Chem Inf 2004; MoleculeNet 'ESOL' (n~1128). Mirror: deepchem/deepchem.",
+  "curation": {
+    "n_input": 1128,
+    "n_unparseable": 0,
+    "n_no_carbon": 0,
+    "n_disallowed_element": 0,
+    "n_standardize_failed": 0,
+    "n_duplicate_records": 11,
+    "n_output": 1117
+  },
+  "n_curated": 1117,
+  "flex_class_counts": {
+    "rigid": 761,
+    "moderate": 241,
+    "flexible": 94,
+    "very_flexible": 21
+  },
+  "n_beyond_ro5": 13,
+  "n_macrocycle": 0,
+  "label_min": -11.6,
+  "label_max": 1.58,
+  "n_representative": 100,
+  "representative_flex_counts": {
+    "flexible": 30,
+    "moderate": 25,
+    "rigid": 24,
+    "very_flexible": 21
+  }
+}

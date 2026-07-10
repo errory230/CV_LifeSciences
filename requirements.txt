@@ -1,0 +1,9 @@
+# Stage 1 (data acquisition, curation, descriptors, selection)
+rdkit>=2023.9
+pandas>=2.0
+numpy>=1.24
+pyarrow>=12.0
+
+# Later stages (molecular dynamics + conformer extraction) will add, e.g.:
+#   openmm, openff-toolkit, mdtraj, openmmforcefields
+# kept out of the stage-1 requirements to keep the environment light.
