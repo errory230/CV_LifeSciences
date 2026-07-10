@@ -77,21 +77,29 @@ except Exception:
 
     md("## 3 · Setup — packages + code\nInstall the MD stack from conda-forge (AmberTools gives `tleap`; OpenMM is the engine) and get the `ensemble_qsar` package + the prep hand-off files. The repo is the simplest source of both."),
     code("""
-import os, sys, subprocess
+import os, sys, glob, subprocess
 
-# condacolab sometimes pins a python version (e.g. 3.12) that does not match the
-# python it actually installed (e.g. 3.11), which makes `mamba install` refuse to
-# run ("Your pinning does not match what's currently installed"). Realign the pin
-# to the RUNNING interpreter so the solver keeps python fixed and installs
-# compatible builds.
-pin = f"python {sys.version_info.major}.{sys.version_info.minor}.*"
-with open("/usr/local/conda-meta/pinned", "w") as fh:
-    fh.write(pin + "\\n")
-print("aligned conda pin ->", pin)
+# condacolab often leaves a python pin (e.g. 3.12) that does NOT match the python
+# it actually installed (e.g. 3.11), so `mamba install` aborts:
+#   "Your pinning does not match what's currently installed".
+# The pin can live in the pinned FILE and/or condarc's pinned_packages, so clear
+# both, then install with python fixed to the running version.
+pyv = f"{sys.version_info.major}.{sys.version_info.minor}"
+for f in glob.glob("/usr/local/conda-meta/pinned"):
+    os.remove(f); print("removed pinned file:", f)
+for scope in ("", "--system"):
+    subprocess.run(f"conda config {scope} --remove-key pinned_packages", shell=True)
+print("--- remaining pins (should be empty) ---")
+subprocess.run("conda config --show pinned_packages 2>/dev/null; "
+               "cat /usr/local/conda-meta/pinned 2>/dev/null", shell=True)
 
-# MD stack (AmberTools for tleap solvation, OpenMM engine, analysis libs).
-# Unpinned versions so the solver picks builds matching Colab's python.
-!mamba install -q -y -c conda-forge openmm ambertools mdtraj mdanalysis scikit-learn matplotlib
+# MD stack (AmberTools -> tleap; OpenMM engine; analysis libs). Force python to
+# the running version so nothing tries to upgrade/downgrade it. mamba, or conda.
+print(f"installing (python={pyv} fixed) — a few minutes ...")
+pkgs = f"python={pyv}.* openmm ambertools mdtraj mdanalysis scikit-learn matplotlib"
+rc = os.system(f"mamba install -y -c conda-forge {pkgs} || "
+               f"conda install -y -c conda-forge {pkgs}")
+print("install exit code:", rc)
 
 # Get the code + prep hand-off files. For a PRIVATE repo, add a Colab secret
 # named GITHUB_TOKEN (key icon on the left) with repo read scope.
