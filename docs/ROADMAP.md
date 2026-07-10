@@ -43,16 +43,20 @@ See [`PREP.md`](PREP.md). `ensemble_qsar/prep/` + `scripts/02_prep_molecule.py`,
 - [x] dry, solvation-ready handoff + `leap_solvate.in` + provenance manifest.
 - [x] fail-soft batch driver; validated on the 6-molecule validation set.
 
-### Stage 2b — GPU MD (next, off this environment)
-- [ ] Run `leap_solvate.in` → solvate (explicit water; optional co-solvent/ions).
-- [ ] Equilibrate + production MD (OpenMM) on GPU.
-- [ ] Extract conformers two ways the user specified: (a) **time-uniform** —
-      one frame per fixed interval; (b) **stability-triggered** — sample once
-      RMSD/energy has plateaued.
-
-### Stage 2c — CPU analysis (return trip)
-- [ ] Align trajectory (RMSD), PCA over Cartesian/torsion space, cluster to a
-      compact weighted ensemble; persist ensembles + provenance.
+### Stage 2b — GPU MD + ensemble analysis ✅ implemented (Colab)
+`ensemble_qsar/md/` + `notebooks/stage2b_md_colab.ipynb` (condacolab + OpenMM).
+Logic validated end-to-end on a CPU OpenMM platform (T1 dry-run).
+- [x] Run `leap_solvate.in` → solvate (explicit water + neutralizing ions) with
+      the exact prep charges/parameters.
+- [x] Minimize → equilibrate (NVT heat → NPT, restraint release) → production MD.
+- [x] Time-uniform conformer capture (frame per fixed interval); all params from
+      a top config block / prep manifest, actual values recorded.
+- [x] Checkpoint/resume-safe (survives Colab disconnects); fail-soft batch.
+- [x] Analysis (return trip): strip solvent, align to prep reference, per-frame
+      **3D-PSA** + RMSD, PCA, KMeans clustering → representative conformers +
+      metrics CSV + plots + `run_manifest.json`.
+- [ ] Optional: stability-triggered sampling (sample once RMSD/energy plateaus)
+      as an alternative to time-uniform — future refinement.
 
 Design note: MD is the expensive step, which is why stage 1 selects a small,
 flexibility-balanced subset and stage 2a keeps solvation off the CPU box.

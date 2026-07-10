@@ -23,8 +23,10 @@ data/prep/_errors/
 # Local conda install (bootstrapped by scripts/setup_conda_env.sh)
 miniconda3/
 
-# Future MD stage artefacts (trajectories are large)
+# Stage 2b MD outputs (trajectories/checkpoints are large & regenerable)
 data/md/
+data/md_dryrun/
 *.dcd
 *.xtc
 *.trr
+*.chk

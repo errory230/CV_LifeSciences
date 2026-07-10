@@ -93,11 +93,19 @@ python scripts/02_prep_molecule.py --from-validation T1_smoke
 python scripts/03_prep_batch.py --input data/validation_subset.csv
 ```
 
+## Stage 2b — GPU MD + ensemble analysis (implemented, Colab)
+
+`notebooks/stage2b_md_colab.ipynb` (thin driver over `ensemble_qsar/md/`) takes
+the prep hand-off and runs **solvate → minimize → equilibrate → production →
+analysis** on a Colab GPU, yielding each molecule's conformational ensemble with
+**3D-PSA**/RMSD, PCA and cluster representatives. Checkpoint/resume-safe across
+Colab disconnects; fail-soft batch. Logic validated end-to-end on CPU OpenMM.
+
 ## Roadmap
 
-See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data) and Stage 2a (CPU prep)
-are done; next is Stage 2b (GPU MD + conformer extraction), then ensemble
-descriptors and the ensemble-vs-static comparison.
+See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data), Stage 2a (CPU prep) and
+Stage 2b (GPU MD + ensemble analysis) are done; next is aggregating ensemble
+descriptors into QSAR models and the ensemble-vs-static comparison (Stage 3–4).
 
 ## Repository layout
 
