@@ -55,7 +55,8 @@ CONFIG = dict(
     nvt_ns=0.1, npt_ns=0.2, restraint_schedule=(10.0, 5.0, 2.0, 0.0),
     # --- production (TEST value; raise to 50.0 once the flow is verified) ---
     production_ns=1.0, save_interval_ps=10.0, checkpoint_interval_ps=100.0,
-    # --- platform ---
+    # --- platform (auto-falls back CUDA -> OpenCL -> CPU; OpenCL IS the GPU on
+    #     a Colab T4 when the pip OpenMM wheel exposes no CUDA plugin) ---
     platform="CUDA", precision="mixed", seed=42,
     # --- analysis ---
     pca_components=10, n_clusters=5, cluster_on="pca",
@@ -170,6 +171,10 @@ cfg = cfg.merge_manifest(mol.manifest)
 print("mol_id :", mol.mol_id, "| class:", mol.mol_class)
 print("net_charge:", mol.manifest.get("net_charge"), "| water:", cfg.water_model, "| seed:", cfg.seed)
 print("hand-off:", list(mol.files))
+
+# which compute platform the MD will actually run on (CUDA/OpenCL = GPU, CPU = not)
+_p, _ = simulate._platform(cfg)
+print("MD platform ->", _p.getName(), "(OpenCL/CUDA = GPU on the T4)")
 """),
 
     md("## 6 · Step 1 — Solvation (tleap)\nRuns the prep `leap_solvate.in`, building a solvated + neutralized box with the exact prep charges/parameters."),

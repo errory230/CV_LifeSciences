@@ -29,13 +29,24 @@ from openmm import app, unit
 _KCAL_A2_TO_KJ_NM2 = 418.4
 
 
+def available_platforms() -> set[str]:
+    return {openmm.Platform.getPlatform(i).getName()
+            for i in range(openmm.Platform.getNumPlatforms())}
+
+
 def _platform(cfg):
-    try:
-        p = openmm.Platform.getPlatformByName(cfg.platform)
-        props = {"Precision": cfg.precision} if cfg.platform == "CUDA" else {}
-        return p, props
-    except Exception:
-        return openmm.Platform.getPlatformByName("CPU"), {}
+    """Pick the best available platform: configured -> CUDA -> OpenCL -> CPU.
+
+    On Colab the pip OpenMM wheel often exposes **OpenCL** (a genuine GPU
+    platform on the NVIDIA T4) but not CUDA, so falling back to OpenCL keeps the
+    run on the GPU instead of silently dropping to CPU.
+    """
+    avail = available_platforms()
+    for name in (cfg.platform, "CUDA", "OpenCL", "CPU", "Reference"):
+        if name in avail:
+            props = {"Precision": cfg.precision} if name in ("CUDA", "OpenCL") else {}
+            return openmm.Platform.getPlatformByName(name), props
+    return openmm.Platform.getPlatformByName("Reference"), {}
 
 
 def _integrator(cfg):
@@ -118,7 +129,7 @@ def minimize(prmtop_path, rst7_path, out_dir: Path, cfg) -> StageResult:
         fh.write(openmm.XmlSerializer.serialize(state))
     energy = state.getPotentialEnergy().value_in_unit(unit.kilojoule_per_mole)
     return StageResult(out, ok=True, seconds=round(time.perf_counter() - t0, 1),
-                       info={"potential_energy_kJ_mol": energy})
+                       info={"potential_energy_kJ_mol": energy, "platform": plat.getName()})
 
 
 def equilibrate(prmtop_path, min_state_xml, out_dir: Path, cfg) -> StageResult:
@@ -207,4 +218,5 @@ def produce(prmtop_path, equil_chk, out_dir: Path, cfg) -> StageResult:
         progress_path.write_text(json.dumps({"steps_done": done, "target": target}))
 
     return StageResult(traj, ok=traj.exists(), seconds=round(time.perf_counter() - t0, 1),
-                       info={"steps_done": done, "n_frames_est": done // save_every})
+                       info={"steps_done": done, "n_frames_est": done // save_every,
+                             "platform": plat.getName()})
