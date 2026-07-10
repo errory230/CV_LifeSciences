@@ -34,18 +34,46 @@ def available_platforms() -> set[str]:
             for i in range(openmm.Platform.getNumPlatforms())}
 
 
-def _platform(cfg):
-    """Pick the best available platform: configured -> CUDA -> OpenCL -> CPU.
+def _validate_platform(name: str, props: dict) -> None:
+    """Build a tiny context to force kernel compilation; raises if unusable.
 
-    On Colab the pip OpenMM wheel often exposes **OpenCL** (a genuine GPU
-    platform on the NVIDIA T4) but not CUDA, so falling back to OpenCL keeps the
-    run on the GPU instead of silently dropping to CPU.
+    A platform can be *listed* yet fail at run time — notably CUDA on Colab,
+    where the pip wheel's PTX is newer than the GPU driver
+    (CUDA_ERROR_UNSUPPORTED_PTX_VERSION). Actually creating a context and taking
+    a step surfaces that here so we can fall through to a working platform.
+    """
+    system = openmm.System()
+    system.addParticle(1.0)
+    force = openmm.NonbondedForce()
+    force.addParticle(0.0, 1.0, 0.0)
+    system.addForce(force)
+    integ = openmm.VerletIntegrator(0.001 * unit.picoseconds)
+    ctx = openmm.Context(system, integ, openmm.Platform.getPlatformByName(name), props)
+    ctx.setPositions([[0.0, 0.0, 0.0]])
+    integ.step(1)
+    del ctx, integ
+
+
+def _platform(cfg):
+    """Pick the best *working* platform: configured -> CUDA -> OpenCL -> CPU.
+
+    Each candidate is validated by actually creating a context, so a platform
+    that is listed but broken (e.g. CUDA with a PTX-version mismatch on Colab)
+    is skipped in favour of one that runs — OpenCL is a genuine GPU platform on
+    the NVIDIA T4 and sidesteps the CUDA/PTX issue entirely.
     """
     avail = available_platforms()
+    seen, order = set(), []
     for name in (cfg.platform, "CUDA", "OpenCL", "CPU", "Reference"):
-        if name in avail:
-            props = {"Precision": cfg.precision} if name in ("CUDA", "OpenCL") else {}
+        if name in avail and name not in seen:
+            seen.add(name); order.append(name)
+    for name in order:
+        props = {"Precision": cfg.precision} if name in ("CUDA", "OpenCL") else {}
+        try:
+            _validate_platform(name, props)
             return openmm.Platform.getPlatformByName(name), props
+        except Exception:
+            continue
     return openmm.Platform.getPlatformByName("Reference"), {}
 
 
