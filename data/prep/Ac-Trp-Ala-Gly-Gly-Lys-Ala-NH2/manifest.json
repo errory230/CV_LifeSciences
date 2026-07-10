@@ -25,6 +25,30 @@
   },
   "steps": [
     {
+      "name": "parameterize",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/peptide_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/leap_solvate.in"
+      ],
+      "info": {
+        "residues": [
+          "ACE",
+          "TRP",
+          "ALA",
+          "GLY",
+          "GLY",
+          "LYS",
+          "ALA",
+          "NHE"
+        ],
+        "net_charge": 1,
+        "cyclic": false,
+        "messages": []
+      }
+    },
+    {
       "name": "classify",
       "status": "ok",
       "seconds": 0.0,
@@ -65,30 +89,6 @@
           "NHE"
         ],
         "notes": []
-      }
-    },
-    {
-      "name": "parameterize",
-      "status": "ok",
-      "seconds": 0.0,
-      "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/peptide_gas.prmtop",
-        "/home/user/CV_LifeSciences/data/prep/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/leap_solvate.in"
-      ],
-      "info": {
-        "residues": [
-          "ACE",
-          "TRP",
-          "ALA",
-          "GLY",
-          "GLY",
-          "LYS",
-          "ALA",
-          "NHE"
-        ],
-        "net_charge": 1,
-        "cyclic": false,
-        "messages": []
       }
     }
   ],

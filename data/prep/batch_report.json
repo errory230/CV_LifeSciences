@@ -1,0 +1,107 @@
+[
+  {
+    "mol_id": "T1_smoke",
+    "smiles": "c1ccncc1",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "small_molecule",
+    "needs_review": false,
+    "net_charge": 0,
+    "handoff_files": [
+      "ligand.mol2",
+      "ligand.frcmod",
+      "ligand_gas.prmtop",
+      "ligand_gas.rst7",
+      "ligand_ref.pdb",
+      "leap_solvate.in",
+      "ligand.sdf"
+    ]
+  },
+  {
+    "mol_id": "1",
+    "smiles": "Cc1cc(COc2ccc(C(=O)N[C@@H]3CC4(C[C@@H]3C(=O)NO)OCCO4)cc2)c2ccccc2n1",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "small_molecule",
+    "needs_review": false,
+    "net_charge": 0,
+    "handoff_files": [
+      "ligand.mol2",
+      "ligand.frcmod",
+      "ligand_gas.prmtop",
+      "ligand_gas.rst7",
+      "ligand_ref.pdb",
+      "leap_solvate.in",
+      "ligand.sdf"
+    ]
+  },
+  {
+    "mol_id": "SDZ-RAD",
+    "smiles": "CO[C@H]1C[C@@H]2CC[C@@H](C)[C@@](O)(O2)C(=O)C(=O)N2CCCC3[C@H]2C(=O)O[C@@H](CC(=O)[C@H](C)/C=C(\\C)[C@@H](O)[C@@H](OC)C(=O)[C@H](C)CC[C@H](C)/C=C/C=C/C=C/1C)[C@H]3C[C@@H]1CC[C@@H](OCCO)[C@H](OC)C1",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "small_molecule",
+    "needs_review": true,
+    "net_charge": 0,
+    "handoff_files": [
+      "ligand.mol2",
+      "ligand.frcmod",
+      "ligand_gas.prmtop",
+      "ligand_gas.rst7",
+      "ligand_ref.pdb",
+      "leap_solvate.in",
+      "ligand.sdf"
+    ]
+  },
+  {
+    "mol_id": "Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
+    "smiles": "CC(=O)N[C@@H](Cc1c[nH]c2ccccc12)C(=O)N[C@@H](C)C(=O)NCC(=O)NCC(=O)N[C@@H](CCCCN)C(=O)N[C@@H](C)C(N)=O",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "peptide",
+    "needs_review": false,
+    "net_charge": 1,
+    "handoff_files": [
+      "peptide_gas.prmtop",
+      "peptide_gas.rst7",
+      "peptide_capped.pdb",
+      "leap_solvate.in"
+    ]
+  },
+  {
+    "mol_id": "228-Raffinose",
+    "smiles": "OC[C@H]1OC(OC[C@H]2OC(O[C@]3(CO)O[C@H](CO)[C@@H](O)[C@@H]3O)[C@H](O)[C@@H](O)[C@@H]2O)[C@H](O)[C@@H](O)[C@H]1O",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "small_molecule",
+    "needs_review": true,
+    "net_charge": 0,
+    "handoff_files": [
+      "ligand.mol2",
+      "ligand.frcmod",
+      "ligand_gas.prmtop",
+      "ligand_gas.rst7",
+      "ligand_ref.pdb",
+      "leap_solvate.in",
+      "ligand.sdf"
+    ]
+  },
+  {
+    "mol_id": "Bis(7)-tacrine (B7T)",
+    "smiles": "c1ccc2c(NCCCCCCCNc3c4c(nc5ccccc35)CCCC4)c3c(nc2c1)CCCC3",
+    "status": "ok",
+    "reason": "",
+    "mol_class": "small_molecule",
+    "needs_review": false,
+    "net_charge": 0,
+    "handoff_files": [
+      "ligand.mol2",
+      "ligand.frcmod",
+      "ligand_gas.prmtop",
+      "ligand_gas.rst7",
+      "ligand_ref.pdb",
+      "leap_solvate.in",
+      "ligand.sdf"
+    ]
+  }
+]

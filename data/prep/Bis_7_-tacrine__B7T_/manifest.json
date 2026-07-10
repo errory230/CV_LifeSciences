@@ -25,30 +25,6 @@
   },
   "steps": [
     {
-      "name": "classify",
-      "status": "ok",
-      "seconds": 0.0,
-      "outputs": [],
-      "info": {
-        "mol_class": "small_molecule",
-        "needs_review": false,
-        "n_residues": 0,
-        "n_amide_bonds": 0,
-        "largest_ring": 6,
-        "is_macrocycle": false,
-        "has_ester": false,
-        "has_nmethyl_amide": false,
-        "is_carbohydrate_like": false,
-        "net_formal_charge": 0,
-        "evidence": [
-          "residues(N-Ca-C=O)=0",
-          "amide_bonds=0",
-          "largest_ring=6",
-          "class=small_molecule (rule: residues>=3 -> peptide)"
-        ]
-      }
-    },
-    {
       "name": "protonate",
       "status": "ok",
       "seconds": 0.0,
@@ -99,6 +75,30 @@
       ],
       "info": {
         "messages": []
+      }
+    },
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 0,
+        "n_amide_bonds": 0,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=0",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
       }
     }
   ],
