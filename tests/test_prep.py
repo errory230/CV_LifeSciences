@@ -53,6 +53,16 @@ def test_protonation_rejects_amidate():
     assert "[N-]" not in res.smiles
 
 
+def test_protonation_rejects_protonated_amide():
+    # SDZ-RAD (everolimus): the pipecolate amide N must not be protonated;
+    # the neutral microstate (net charge 0) must be selected.
+    smi = ("CO[C@H]1C[C@@H]2CC[C@@H](C)[C@@](O)(O2)C(=O)C(=O)N2CCCC3[C@H]2C(=O)O"
+           "[C@@H](CC(=O)[C@H](C)/C=C(\\C)[C@@H](O)[C@@H](OC)C(=O)[C@H](C)CC[C@H]"
+           "(C)/C=C/C=C/C=C/1C)[C@H]3C[C@@H]1CC[C@@H](OCCO)[C@H](OC)C1")
+    res = protonate.protonate_small_molecule(smi, ph=7.4)
+    assert res.net_charge == 0
+
+
 if __name__ == "__main__":
     test_classify_routes()
     test_peptide_sequence_from_name()

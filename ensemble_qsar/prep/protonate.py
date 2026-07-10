@@ -18,10 +18,14 @@ from dataclasses import dataclass, field
 
 from rdkit import Chem
 
-# A deprotonated secondary amide ("amidate"): chemically implausible near pH 7
-# (amide pKa ~17). Dimorphite can emit it when the pH window is widened, so we
-# reject any variant containing it as a safety guard.
-_AMIDATE = Chem.MolFromSmarts("[NX2-][CX3]=O")
+# Chemically implausible amide ionizations near pH 7 that Dimorphite can emit:
+#   - deprotonated amide N ("amidate"), amide pKa ~17
+#   - protonated amide N (amides protonate on O, and only under strong acid)
+# Any variant containing either is rejected as a safety guard.
+_IMPLAUSIBLE = (
+    Chem.MolFromSmarts("[NX2-][CX3]=O"),   # deprotonated amide
+    Chem.MolFromSmarts("[NX4+][CX3]=O"),   # protonated amide
+)
 
 
 @dataclass
@@ -41,7 +45,9 @@ def _canonical(smi: str) -> str:
 
 def _is_plausible(smi: str) -> bool:
     mol = Chem.MolFromSmiles(smi)
-    return mol is not None and not mol.HasSubstructMatch(_AMIDATE)
+    if mol is None:
+        return False
+    return not any(mol.HasSubstructMatch(p) for p in _IMPLAUSIBLE)
 
 
 def protonate_small_molecule(
