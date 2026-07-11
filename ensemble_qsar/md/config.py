@@ -52,6 +52,8 @@ class MDConfig:
     pca_components: int = 10
     n_clusters: int = 5
     cluster_on: str = "pca"               # "pca" | "rmsd"
+    tsne: bool = True                     # add a t-SNE embedding of the ensemble
+    tsne_perplexity: float = 30.0         # auto-capped to the frame count
     # per-frame descriptors to compute; psa3d + rmsd are the permeability core.
     descriptors: tuple[str, ...] = ("psa3d", "rmsd")
 

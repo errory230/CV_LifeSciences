@@ -207,7 +207,7 @@ prod = simulate.produce(sol.prmtop, eq.output, out_dir, cfg)
 print("ok:", prod.ok, "| info:", prod.info, "| seconds:", prod.seconds)
 """),
 
-    md("## 10 · Step 5 — Analysis → ensemble\nStrip solvent, align to the prep reference, compute 3D-PSA/RMSD, PCA, cluster, and save one representative structure per cluster."),
+    md("## 10 · Step 5 — Analysis → ensemble\nStrip solvent, align to the prep reference, compute 3D-PSA/RMSD, reduce the conformers with **PCA and t-SNE**, cluster, and save one representative structure per cluster. Both the PCA and t-SNE scatter plots are shown below."),
     code("""
 ana = analyze.analyze(prod.output, sol.prmtop, mol.reference_structure, out_dir, cfg)
 print("frames:", ana.n_frames, "| representatives:", [p.name for p in ana.representatives])

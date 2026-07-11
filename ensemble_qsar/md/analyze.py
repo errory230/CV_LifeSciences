@@ -22,6 +22,7 @@ import mdtraj as md
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 _WATER = {"HOH", "WAT", "SOL"}
 _IONS = {"NA", "CL", "K", "NA+", "CL-", "K+", "Na+", "Cl-", "K+"}
@@ -132,6 +133,20 @@ def analyze(traj_path, prmtop_path, ref_pdb, out_dir: Path, cfg) -> AnalysisResu
     if n_pc > 1:
         cols["PC2"] = proj[:, 1]
 
+    # --- t-SNE embedding of the ensemble (run on the PCA projection) --------
+    if cfg.tsne and n >= 5 and proj.shape[1] >= 2:
+        # perplexity must be < n_samples; cap it to the frame count.
+        perp = float(min(cfg.tsne_perplexity, max(2.0, (n - 1) / 3.0)))
+        try:
+            emb = TSNE(n_components=2, perplexity=perp, init="pca",
+                       learning_rate="auto", random_state=int(cfg.seed)).fit_transform(proj)
+            cols["tSNE1"] = emb[:, 0]
+            cols["tSNE2"] = emb[:, 1]
+        except Exception as e:  # noqa: BLE001
+            warnings.append(f"t-SNE skipped ({e})")
+    elif cfg.tsne:
+        warnings.append("t-SNE skipped (too few frames)")
+
     # --- clustering + representatives --------------------------------------
     space = proj if cfg.cluster_on == "pca" else X
     k = min(cfg.n_clusters, n)
@@ -201,12 +216,16 @@ except Exception:  # noqa: BLE001
 
 def _make_plots(ana: Path, cols: dict, labels, k) -> list[Path]:
     out = []
-    if "PC1" in cols and "PC2" in cols:
-        fig, ax = plt.subplots(figsize=(5, 4))
-        sc = ax.scatter(cols["PC1"], cols["PC2"], c=labels, cmap="tab10", s=12)
-        ax.set_xlabel("PC1"); ax.set_ylabel("PC2"); ax.set_title("Conformational PCA")
-        fig.colorbar(sc, label="cluster"); fig.tight_layout()
-        p = ana / "pca_scatter.png"; fig.savefig(p, dpi=120); plt.close(fig); out.append(p)
+    for x, y, title, fname in (
+        ("PC1", "PC2", "Conformational PCA", "pca_scatter.png"),
+        ("tSNE1", "tSNE2", "Conformational t-SNE", "tsne_scatter.png"),
+    ):
+        if x in cols and y in cols:
+            fig, ax = plt.subplots(figsize=(5, 4))
+            sc = ax.scatter(cols[x], cols[y], c=labels, cmap="tab10", s=12)
+            ax.set_xlabel(x); ax.set_ylabel(y); ax.set_title(title)
+            fig.colorbar(sc, label="cluster"); fig.tight_layout()
+            p = ana / fname; fig.savefig(p, dpi=120); plt.close(fig); out.append(p)
     series = [c for c in ("rmsd_A", "psa3d_A2", "rg_A") if c in cols]
     if series:
         fig, axes = plt.subplots(len(series), 1, figsize=(6, 2.2 * len(series)), squeeze=False)
