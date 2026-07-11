@@ -1,18 +1,17 @@
 {
-  "mol_id": "Ginsenoside Rg1 (Rg1)",
-  "smiles": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
-  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_",
+  "mol_id": "Pyrimethamine",
+  "smiles": "CCc1nc(N)nc(N)c1-c1ccc(Cl)cc1",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine",
   "mol_class": "small_molecule",
   "class_evidence": [
     "residues(N-Ca-C=O)=0",
     "amide_bonds=0",
     "largest_ring=6",
-    "class=small_molecule (rule: residues>=3 -> peptide)",
-    "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+    "class=small_molecule (rule: residues>=3 -> peptide)"
   ],
-  "needs_review": true,
+  "needs_review": false,
   "ph": 7.4,
-  "protonation_state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+  "protonation_state": "CCc1nc(N)nc(N)c1-c1ccc(Cl)cc1",
   "net_charge": 0,
   "charge_method": "AM1-BCC (antechamber/sqm)",
   "forcefield": "GAFF2",
@@ -32,21 +31,20 @@
       "outputs": [],
       "info": {
         "mol_class": "small_molecule",
-        "needs_review": true,
+        "needs_review": false,
         "n_residues": 0,
         "n_amide_bonds": 0,
         "largest_ring": 6,
         "is_macrocycle": false,
         "has_ester": false,
         "has_nmethyl_amide": false,
-        "is_carbohydrate_like": true,
+        "is_carbohydrate_like": false,
         "net_formal_charge": 0,
         "evidence": [
           "residues(N-Ca-C=O)=0",
           "amide_bonds=0",
           "largest_ring=6",
-          "class=small_molecule (rule: residues>=3 -> peptide)",
-          "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+          "class=small_molecule (rule: residues>=3 -> peptide)"
         ]
       }
     },
@@ -57,10 +55,10 @@
       "outputs": [],
       "info": {
         "tool": "dimorphite-dl 2.0.2",
-        "state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+        "state": "CCc1nc(N)nc(N)c1-c1ccc(Cl)cc1",
         "net_charge": 0,
         "variants": [
-          "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C"
+          "CCc1nc(N)nc(N)c1-c1ccc(Cl)cc1"
         ],
         "note": "single microstate"
       }
@@ -70,21 +68,21 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/conformer.sdf"
+        "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine/intermediates/conformer.sdf"
       ],
       "info": {
-        "energy": 364.8295,
+        "energy": -87.0863,
         "ff": "MMFF94s",
         "tried": 20,
-        "converged": 0
+        "converged": 20
       }
     },
     {
       "name": "charges",
       "status": "ok",
-      "seconds": 431.607,
+      "seconds": 14.447,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.mol2"
+        "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine/intermediates/ligand.mol2"
       ],
       "info": {
         "method": "AM1-BCC (antechamber/sqm)",
@@ -96,9 +94,9 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.frcmod",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand_gas.prmtop",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/leap_solvate.in"
+        "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Pyrimethamine/intermediates/leap_solvate.in"
       ],
       "info": {
         "messages": []

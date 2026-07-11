@@ -1,18 +1,18 @@
 {
-  "mol_id": "Ginsenoside Rg1 (Rg1)",
-  "smiles": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
-  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_",
+  "mol_id": "32f",
+  "smiles": "COc1ccc2c(O[C@@H]3C[C@H]4C(=O)N[C@]5(C(=O)NS(=O)(=O)C6CC6)C[C@H]5/C=C\\CCCCN(C)C(=O)[C@@H]4C3)cc(-c3nc(C(C)C)cs3)nc2c1Cl",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/32f",
   "mol_class": "small_molecule",
   "class_evidence": [
     "residues(N-Ca-C=O)=0",
-    "amide_bonds=0",
-    "largest_ring=6",
+    "amide_bonds=3",
+    "largest_ring=14",
     "class=small_molecule (rule: residues>=3 -> peptide)",
-    "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+    "REVIEW: macrocycle (ring>=12); explicit ring-closure topology needed"
   ],
   "needs_review": true,
   "ph": 7.4,
-  "protonation_state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+  "protonation_state": "COc1ccc2c(O[C@@H]3C[C@H]4C(=O)N[C@]5(C(=O)NS(=O)(=O)C6CC6)C[C@H]5/C=C\\CCCCN(C)C(=O)[C@@H]4C3)cc(-c3nc(C(C)C)cs3)nc2c1Cl",
   "net_charge": 0,
   "charge_method": "AM1-BCC (antechamber/sqm)",
   "forcefield": "GAFF2",
@@ -34,19 +34,19 @@
         "mol_class": "small_molecule",
         "needs_review": true,
         "n_residues": 0,
-        "n_amide_bonds": 0,
-        "largest_ring": 6,
-        "is_macrocycle": false,
+        "n_amide_bonds": 3,
+        "largest_ring": 14,
+        "is_macrocycle": true,
         "has_ester": false,
-        "has_nmethyl_amide": false,
-        "is_carbohydrate_like": true,
+        "has_nmethyl_amide": true,
+        "is_carbohydrate_like": false,
         "net_formal_charge": 0,
         "evidence": [
           "residues(N-Ca-C=O)=0",
-          "amide_bonds=0",
-          "largest_ring=6",
+          "amide_bonds=3",
+          "largest_ring=14",
           "class=small_molecule (rule: residues>=3 -> peptide)",
-          "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+          "REVIEW: macrocycle (ring>=12); explicit ring-closure topology needed"
         ]
       }
     },
@@ -57,12 +57,13 @@
       "outputs": [],
       "info": {
         "tool": "dimorphite-dl 2.0.2",
-        "state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+        "state": "COc1ccc2c(O[C@@H]3C[C@H]4C(=O)N[C@]5(C(=O)NS(=O)(=O)C6CC6)C[C@H]5/C=C\\CCCCN(C)C(=O)[C@@H]4C3)cc(-c3nc(C(C)C)cs3)nc2c1Cl",
         "net_charge": 0,
         "variants": [
-          "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C"
+          "COc1ccc2c(O[C@@H]3C[C@H]4C(=O)N[C@]5(C(=O)[N-]S(=O)(=O)C6CC6)C[C@H]5/C=C\\CCCCN(C)C(=O)[C@@H]4C3)cc(-c3nc(C(C)C)cs3)nc2c1Cl",
+          "COc1ccc2c(O[C@@H]3C[C@H]4C(=O)N[C@]5(C(=O)[N-]S(=O)(=O)C6CC6)C[C@H]5/C=C\\CCCC[NH+](C)C(=O)[C@@H]4C3)cc(-c3nc(C(C)C)cs3)nc2c1Cl"
         ],
-        "note": "single microstate"
+        "note": "all enumerated variants implausible (amidate); input kept"
       }
     },
     {
@@ -70,10 +71,10 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/conformer.sdf"
+        "/home/user/CV_LifeSciences/data/prep/caco2/32f/intermediates/conformer.sdf"
       ],
       "info": {
-        "energy": 364.8295,
+        "energy": -3.4813,
         "ff": "MMFF94s",
         "tried": 20,
         "converged": 0
@@ -82,9 +83,9 @@
     {
       "name": "charges",
       "status": "ok",
-      "seconds": 431.607,
+      "seconds": 290.605,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.mol2"
+        "/home/user/CV_LifeSciences/data/prep/caco2/32f/intermediates/ligand.mol2"
       ],
       "info": {
         "method": "AM1-BCC (antechamber/sqm)",
@@ -96,9 +97,9 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.frcmod",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand_gas.prmtop",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/leap_solvate.in"
+        "/home/user/CV_LifeSciences/data/prep/caco2/32f/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/32f/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/32f/intermediates/leap_solvate.in"
       ],
       "info": {
         "messages": []

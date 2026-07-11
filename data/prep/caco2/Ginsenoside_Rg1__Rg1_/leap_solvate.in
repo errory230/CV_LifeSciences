@@ -1,0 +1,10 @@
+# Run on the GPU host to build the solvated system.
+source leaprc.gaff2
+source leaprc.water.tip3p
+LIG = loadmol2 ligand.mol2
+loadamberparams ligand.frcmod
+solvateBox LIG TIP3PBOX 12.0
+addions LIG Cl- 0
+saveamberparm LIG ligand_solv.prmtop ligand_solv.rst7
+savepdb LIG ligand_solv.pdb
+quit

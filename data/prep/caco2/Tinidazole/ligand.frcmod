@@ -1,0 +1,21 @@
+Remark line goes here
+MASS
+
+BOND
+
+ANGLE
+cc-nh-oh   85.800     112.970   same as ca-nh-oh, penalty score=  2.0
+
+DIHE
+
+IMPROPER
+c3-cc-na-cc         1.1          180.0         2.0          Using the default value
+cd-na-cc-nh         1.1          180.0         2.0          Using the default value
+cc-oh-nh-oh         1.1          180.0         2.0          Using the default value
+cc-h4-cd-nd         1.1          180.0         2.0          Same as X -X -ca-ha, penalty score= 67.2 (use general term))
+c3-na-cc-nd         1.1          180.0         2.0          Using the default value
+
+NONBON
+
+
+

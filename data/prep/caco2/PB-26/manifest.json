@@ -1,18 +1,17 @@
 {
-  "mol_id": "Ginsenoside Rg1 (Rg1)",
-  "smiles": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
-  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_",
+  "mol_id": "PB-26",
+  "smiles": "Cn1cncc1CN1CC(N(Cc2cccc(-n3cccc3)c2)S(=O)(=O)c2ccccn2)Cc2cc(C#N)ccc21",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/PB-26",
   "mol_class": "small_molecule",
   "class_evidence": [
     "residues(N-Ca-C=O)=0",
     "amide_bonds=0",
     "largest_ring=6",
-    "class=small_molecule (rule: residues>=3 -> peptide)",
-    "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+    "class=small_molecule (rule: residues>=3 -> peptide)"
   ],
-  "needs_review": true,
+  "needs_review": false,
   "ph": 7.4,
-  "protonation_state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+  "protonation_state": "Cn1cncc1CN1CC(N(Cc2cccc(-n3cccc3)c2)S(=O)(=O)c2ccccn2)Cc2cc(C#N)ccc21",
   "net_charge": 0,
   "charge_method": "AM1-BCC (antechamber/sqm)",
   "forcefield": "GAFF2",
@@ -32,21 +31,20 @@
       "outputs": [],
       "info": {
         "mol_class": "small_molecule",
-        "needs_review": true,
+        "needs_review": false,
         "n_residues": 0,
         "n_amide_bonds": 0,
         "largest_ring": 6,
         "is_macrocycle": false,
         "has_ester": false,
         "has_nmethyl_amide": false,
-        "is_carbohydrate_like": true,
+        "is_carbohydrate_like": false,
         "net_formal_charge": 0,
         "evidence": [
           "residues(N-Ca-C=O)=0",
           "amide_bonds=0",
           "largest_ring=6",
-          "class=small_molecule (rule: residues>=3 -> peptide)",
-          "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+          "class=small_molecule (rule: residues>=3 -> peptide)"
         ]
       }
     },
@@ -57,12 +55,13 @@
       "outputs": [],
       "info": {
         "tool": "dimorphite-dl 2.0.2",
-        "state": "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C",
+        "state": "Cn1cncc1CN1CC(N(Cc2cccc(-n3cccc3)c2)S(=O)(=O)c2ccccn2)Cc2cc(C#N)ccc21",
         "net_charge": 0,
         "variants": [
-          "CC(C)=CCC[C@](C)(O[C@@H]1O[C@@H](CO)[C@@H](O)[C@H](O)[C@H]1O)[C@H]1CC[C@]2(C)[C@@H]1[C@H](O)C[C@@H]1[C@@]3(C)CC[C@H](O)C(C)(C)[C@@H]3C(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)C[C@]12C"
+          "Cn1cncc1CN1CC(N(Cc2cccc(-n3cccc3)c2)S(=O)(=O)c2ccccn2)Cc2cc(C#N)ccc21",
+          "Cn1cncc1CN1CC([NH+](Cc2cccc(-n3cccc3)c2)S(=O)(=O)c2ccccn2)Cc2cc(C#N)ccc21"
         ],
-        "note": "single microstate"
+        "note": "2 microstate(s); 0 implausible dropped; dominant selected"
       }
     },
     {
@@ -70,21 +69,21 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/conformer.sdf"
+        "/home/user/CV_LifeSciences/data/prep/caco2/PB-26/intermediates/conformer.sdf"
       ],
       "info": {
-        "energy": 364.8295,
+        "energy": 104.1889,
         "ff": "MMFF94s",
         "tried": 20,
-        "converged": 0
+        "converged": 12
       }
     },
     {
       "name": "charges",
       "status": "ok",
-      "seconds": 431.607,
+      "seconds": 150.773,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.mol2"
+        "/home/user/CV_LifeSciences/data/prep/caco2/PB-26/intermediates/ligand.mol2"
       ],
       "info": {
         "method": "AM1-BCC (antechamber/sqm)",
@@ -96,9 +95,9 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand.frcmod",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/ligand_gas.prmtop",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Ginsenoside_Rg1__Rg1_/intermediates/leap_solvate.in"
+        "/home/user/CV_LifeSciences/data/prep/caco2/PB-26/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/PB-26/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/PB-26/intermediates/leap_solvate.in"
       ],
       "info": {
         "messages": []

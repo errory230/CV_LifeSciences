@@ -1,0 +1,130 @@
+{
+  "mol_id": "Salvianolic acid A (SAA)",
+  "smiles": "O=C(/C=C/c1ccc(O)c(O)c1/C=C/c1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)O",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=0",
+    "largest_ring=6",
+    "class=small_molecule (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+  "net_charge": -4,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 0,
+        "n_amide_bonds": 0,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": true,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=0",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+        "net_charge": -4,
+        "variants": [
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc(O)c([O-])c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc(O)c([O-])c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc(O)c([O-])c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc([O-])c([O-])c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc(O)c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c([O-])c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc([O-])c([O-])c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc([O-])c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc(O)c([O-])c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc(O)c(O)c1)OC(Cc1ccc(O)c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c(O)c1/C=C/c1ccc(O)c(O)c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]",
+          "O=C(/C=C/c1ccc([O-])c([O-])c1/C=C/c1ccc([O-])c([O-])c1)OC(Cc1ccc([O-])c(O)c1)C(=O)[O-]"
+        ],
+        "note": "16 microstate(s); 0 implausible dropped; dominant selected"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 184.973,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 13
+      }
+    },
+    {
+      "name": "charges",
+      "status": "ok",
+      "seconds": 103.562,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_/intermediates/ligand.mol2"
+      ],
+      "info": {
+        "method": "AM1-BCC (antechamber/sqm)",
+        "neutral_fallback": false
+      }
+    },
+    {
+      "name": "parameterize",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Salvianolic_acid_A__SAA_/intermediates/leap_solvate.in"
+      ],
+      "info": {
+        "messages": []
+      }
+    }
+  ],
+  "handoff_files": [
+    "ligand.mol2",
+    "ligand.frcmod",
+    "ligand_gas.prmtop",
+    "ligand_gas.rst7",
+    "ligand_ref.pdb",
+    "leap_solvate.in",
+    "ligand.sdf"
+  ]
+}

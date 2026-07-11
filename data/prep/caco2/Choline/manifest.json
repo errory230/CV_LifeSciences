@@ -1,0 +1,115 @@
+{
+  "mol_id": "Choline",
+  "smiles": "C[N+](C)(C)CCO",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Choline",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=0",
+    "largest_ring=0",
+    "class=small_molecule (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "C[N+](C)(C)CCO",
+  "net_charge": 1,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 0,
+        "n_amide_bonds": 0,
+        "largest_ring": 0,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 1,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=0",
+          "largest_ring=0",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "C[N+](C)(C)CCO",
+        "net_charge": 1,
+        "variants": [
+          "C[N+](C)(C)CCO"
+        ],
+        "note": "single microstate"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Choline/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 39.0621,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 20
+      }
+    },
+    {
+      "name": "charges",
+      "status": "ok",
+      "seconds": 1.986,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Choline/intermediates/ligand.mol2"
+      ],
+      "info": {
+        "method": "AM1-BCC (antechamber/sqm)",
+        "neutral_fallback": false
+      }
+    },
+    {
+      "name": "parameterize",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/Choline/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Choline/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Choline/intermediates/leap_solvate.in"
+      ],
+      "info": {
+        "messages": []
+      }
+    }
+  ],
+  "handoff_files": [
+    "ligand.mol2",
+    "ligand.frcmod",
+    "ligand_gas.prmtop",
+    "ligand_gas.rst7",
+    "ligand_ref.pdb",
+    "leap_solvate.in",
+    "ligand.sdf"
+  ]
+}
