@@ -101,6 +101,22 @@ analysis** on a Colab GPU, yielding each molecule's conformational ensemble with
 **3D-PSA**/RMSD, PCA and cluster representatives. Checkpoint/resume-safe across
 Colab disconnects; fail-soft batch. Logic validated end-to-end on CPU OpenMM.
 
+## Stage 5 — one-command tool: SMILES → MD-ensemble report (implemented)
+
+`run.py` orchestrates the whole pipeline (prep → MD → analysis) end-to-end and
+emits a self-contained `explore_<mol_id>.html` per molecule. It reuses the Stage
+2/3 code as-is — each stage's skip logic makes re-runs resume. Everything for one
+molecule lands in a single merged directory `results/<mol_id>/`.
+
+```bash
+conda activate mdsprep                       # local GPU for MD; CPU for prep/analysis
+python run.py "O=C(O)c1ccccc1" --name aspirin
+python run.py --input molecules.csv --outdir results          # batch, fail-soft
+python run.py "CCO" --production-ns 50 --n-frames 500 --force
+```
+Batch runs also write `summary.csv` and regenerate the `index.html` hub. See
+[`docs/CLI.md`](docs/CLI.md).
+
 ## Stage 3 — Ensemble descriptors + explorer (implemented)
 
 `ensemble_qsar/features/` aggregates each MD ensemble into a per-molecule QSAR

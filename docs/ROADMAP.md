@@ -78,6 +78,14 @@ flexibility-balanced subset and stage 2a keeps solvation off the CPU box.
 - [ ] Train QSAR models (endpoint per dataset) on **static** vs **ensemble**
       features with identical splits.
 
+## Stage 5 — One-command CLI tool ✅ implemented
+
+`run.py` + `ensemble_qsar/cli/orchestrate.py`. Thin orchestrator over Stages 2–3:
+SMILES → prep → MD → analysis → self-contained `explore_<mol_id>.html`, in a
+merged `results/<mol_id>/` dir. Deterministic hash-slug mol ids, resume-on-rerun
+(stage skip), `--force`, fail-soft batch with `summary.csv` + hub. Validated
+end-to-end on CPU. See [`CLI.md`](CLI.md).
+
 ## Stage 4 — Proof of concept: does the ensemble help?
 
 - [ ] Compare static vs ensemble QSAR with a scaffold-aware split.
