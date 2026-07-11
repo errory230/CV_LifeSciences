@@ -18,13 +18,16 @@ from dataclasses import dataclass, field
 
 from rdkit import Chem
 
-# Chemically implausible amide ionizations near pH 7 that Dimorphite can emit:
-#   - deprotonated amide N ("amidate"), amide pKa ~17
-#   - protonated amide N (amides protonate on O, and only under strong acid)
-# Any variant containing either is rejected as a safety guard.
+# Protonation states Dimorphite can emit that are both chemically implausible
+# near pH 7 and hostile to antechamber's valence perception:
+#   - a deprotonated NON-aromatic nitrogen (amide/sulfonamide/imide N-H; pKa ~9-17,
+#     so neutral at pH 7.4). antechamber rejects the 2-valent N ("weird valence").
+#     Aromatic anions (e.g. tetrazolate, pKa ~5) are excluded via ;!a and kept.
+#   - a protonated amide nitrogen (amides protonate on O only, under strong acid).
+# Any variant containing either is rejected; we fall back to a plausible one.
 _IMPLAUSIBLE = (
-    Chem.MolFromSmarts("[NX2-][CX3]=O"),   # deprotonated amide
-    Chem.MolFromSmarts("[NX4+][CX3]=O"),   # protonated amide
+    Chem.MolFromSmarts("[NX2-;!a]"),        # deprotonated non-aromatic N
+    Chem.MolFromSmarts("[NX4+][CX3]=O"),    # protonated amide
 )
 
 

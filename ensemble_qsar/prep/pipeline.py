@@ -16,6 +16,8 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
+from rdkit import Chem
+
 from . import charges, classify, conformer, parameterize, peptide, protonate
 from ._util import tool_version
 from .manifest import Manifest, StepRecord
@@ -101,13 +103,29 @@ def prep_molecule(
     if not m.is_done("charges"):
         ch = charges.assign_am1bcc_charges(
             sdf, out_dir=work, net_charge=net_charge, atom_type=cfg.atom_type)
+        fallback = False
+        if not ch.ok:
+            # Safety net: a protonation microstate can be antechamber-hostile
+            # (e.g. an over-deprotonated N). Retry once with the neutral parent.
+            neutral = Chem.MolToSmiles(Chem.MolFromSmiles(smiles))
+            conf = conformer.generate_conformer(
+                neutral, random_seed=cfg.random_seed, n_conformers=cfg.n_conformers)
+            conformer.write_sdf(conf.mol, str(sdf))
+            ch = charges.assign_am1bcc_charges(
+                sdf, out_dir=work, net_charge=0, atom_type=cfg.atom_type)
+            if ch.ok:
+                fallback = True
+                net_charge = 0
+                m.net_charge = 0
+                m.protonation_state = f"{neutral} (neutral fallback)"
         if not ch.ok:
             m.record(StepRecord("charges", "failed", seconds=ch.cmd.seconds,
                                 info={"stderr_tail": ch.cmd.stderr[-800:]}))
             m.save()
             raise RuntimeError(f"{mol_id}: AM1-BCC charge assignment failed")
         m.record(StepRecord("charges", "ok", seconds=ch.cmd.seconds,
-                            outputs=[str(ch.mol2_path)], info={"method": ch.charge_method}))
+                            outputs=[str(ch.mol2_path)],
+                            info={"method": ch.charge_method, "neutral_fallback": fallback}))
 
     # --- Step 5: GAFF2 parameterization + handoff --------------------------
     if not m.is_done("parameterize"):
