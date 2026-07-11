@@ -50,6 +50,10 @@ def prep_molecule(
     mol_id: str, smiles: str, *, out_root: Path, config: PrepConfig | None = None
 ) -> Manifest:
     cfg = config or PrepConfig()
+    # Resolve to absolute: the external tools (antechamber/parmchk2) run with
+    # cwd set to the intermediates dir, so any relative input/output path passed
+    # to them would break. Absolute paths make the route cwd-independent.
+    out_root = Path(out_root).resolve()
     mol_dir = out_root / _safe(mol_id)
     work = mol_dir / "intermediates"
     work.mkdir(parents=True, exist_ok=True)
