@@ -101,11 +101,27 @@ analysis** on a Colab GPU, yielding each molecule's conformational ensemble with
 **3D-PSA**/RMSD, PCA and cluster representatives. Checkpoint/resume-safe across
 Colab disconnects; fail-soft batch. Logic validated end-to-end on CPU OpenMM.
 
+## Stage 3 — Ensemble descriptors + explorer (implemented)
+
+`ensemble_qsar/features/` aggregates each MD ensemble into a per-molecule QSAR
+feature row (3D-PSA, Rg, SASA, intramolecular H-bonds — distribution stats +
+population-weighted means) → `features.csv`. `ensemble_qsar/viz/` builds a
+**self-contained HTML explorer** per molecule (`scripts/20_export_viz.py`): a
+data exporter writes `viz_data.json`, a molecule-agnostic viewer renders a
+t-SNE/PCA scatter (click a conformer), time slider, descriptor time series and
+cluster-representative 3D images — one file, no server or CDN.
+
+```bash
+python scripts/20_export_viz.py --md-dir data/md/<mol_id>   # one molecule
+python scripts/21_build_all.py  --md-root data/md           # all + index.html + features.csv
+```
+
 ## Roadmap
 
-See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data), Stage 2a (CPU prep) and
-Stage 2b (GPU MD + ensemble analysis) are done; next is aggregating ensemble
-descriptors into QSAR models and the ensemble-vs-static comparison (Stage 3–4).
+See [`docs/ROADMAP.md`](docs/ROADMAP.md). Stage 1 (data), Stage 2a (CPU prep),
+Stage 2b (GPU MD + ensemble analysis) and Stage 3 (ensemble descriptors +
+explorer) are done; next is training QSAR models on static vs ensemble features
+(the ensemble-vs-static comparison).
 
 ## Repository layout
 

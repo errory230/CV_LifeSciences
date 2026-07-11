@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ensemble Explorer</title>
+<style>
+  :root { --bg:#f7f8fa; --card:#fff; --ink:#1c2330; --muted:#6b7480; --line:#e4e8ee; --accent:#3457d5; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         background:var(--bg); color:var(--ink); }
+  header { padding:14px 20px; background:var(--card); border-bottom:1px solid var(--line); }
+  header h1 { margin:0; font-size:17px; }
+  .smiles { color:var(--muted); font:12px ui-monospace,Menlo,monospace; word-break:break-all; }
+  .cards { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+  .card { background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:8px 12px; min-width:120px; }
+  .card .k { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  .card .v { font-size:18px; font-weight:600; }
+  .card .v small { font-weight:400; color:var(--muted); font-size:12px; }
+  main { display:grid; grid-template-columns:1fr 320px; gap:14px; padding:14px 20px; }
+  @media (max-width:840px){ main{ grid-template-columns:1fr; } }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
+  .panel h2 { margin:0 0 8px; font-size:13px; color:var(--muted); font-weight:600; }
+  .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  canvas { width:100%; display:block; border-radius:8px; background:#fff; }
+  select, button { font:13px inherit; padding:4px 8px; border:1px solid var(--line);
+                   border-radius:6px; background:#fff; color:var(--ink); cursor:pointer; }
+  button.play { background:var(--accent); color:#fff; border-color:var(--accent); min-width:40px; }
+  .metrics-tbl { width:100%; border-collapse:collapse; margin-top:4px; }
+  .metrics-tbl td { padding:3px 4px; border-bottom:1px solid var(--line); }
+  .metrics-tbl td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+  .repimg { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .repimg img { width:130px; height:130px; background:#fbfcfe; border:1px solid var(--line); border-radius:8px; }
+  .full { grid-column:1 / -1; }
+  .legend { display:flex; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:4px; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+  input[type=range]{ width:100%; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="molid">molecule</h1>
+  <div class="smiles" id="smiles"></div>
+  <div class="cards" id="cards"></div>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Conformational map <span class="row" style="float:right">
+      <label>embedding
+        <select id="embed"><option value="tsne">t-SNE</option><option value="pca">PCA</option></select>
+      </label></span></h2>
+    <canvas id="scatter" width="640" height="440"></canvas>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <aside class="panel">
+    <h2>Selected conformation</h2>
+    <div id="selinfo">Click a point (or use the slider).</div>
+    <table class="metrics-tbl" id="seltbl"></table>
+    <div class="repimg" id="repimg"></div>
+  </aside>
+
+  <section class="panel full">
+    <div class="row">
+      <button class="play" id="play">▶</button>
+      <input type="range" id="slider" min="0" max="0" value="0">
+      <span id="fpos" style="color:var(--muted);min-width:120px;text-align:right"></span>
+    </div>
+  </section>
+
+  <section class="panel full">
+    <h2>Descriptor time series <span class="row" style="float:right">
+      <label>metric <select id="metric"></select></label></h2>
+    <canvas id="chart" width="960" height="220"></canvas>
+  </section>
+</main>
+
+<script>
+const DATA = __VIZ_DATA__;
+const PALETTE = ["#3457d5","#e8710a","#12924b","#c0392b","#7d3ac1","#8a5a44",
+                 "#d63bab","#5b6670","#b6a400","#0aa3c2"];
+const METRICS = ["psa3d","rg","intra_hbond","sasa","rmsd"];
+const LABELS = {psa3d:"3D-PSA (Å²)", rg:"Rg (Å)", intra_hbond:"intra H-bonds",
+                sasa:"SASA (Å²)", rmsd:"RMSD (Å)"};
+const F = DATA.frames, EQ = DATA.meta.equilibration_frame|0;
+let cur = 0, playing = null, embed = "tsne", metric = "psa3d";
+
+function fmt(x){ return (typeof x==="number") ? (Math.abs(x)>=100?x.toFixed(0):x.toFixed(2)) : x; }
+
+// ---------- header ----------
+document.getElementById("molid").textContent = DATA.meta.mol_id;
+document.getElementById("smiles").textContent = DATA.meta.smiles || "";
+(function cards(){
+  const c = document.getElementById("cards"); const w = DATA.summary.ensemble_weighted||{};
+  METRICS.forEach(m=>{ if(m in (DATA.summary))(function(){
+    const s = DATA.summary[m];
+    const el = document.createElement("div"); el.className="card";
+    el.innerHTML = `<div class="k">${LABELS[m]}</div><div class="v">${fmt(w[m]??s.mean)} <small>±${fmt(s.std)}</small></div>`;
+    c.appendChild(el);
+  })(); });
+})();
+
+// ---------- metric + embedding selectors ----------
+const msel = document.getElementById("metric");
+METRICS.filter(m=>m in F[0]).forEach(m=>{ const o=document.createElement("option");
+  o.value=m; o.textContent=LABELS[m]; msel.appendChild(o); });
+msel.onchange = e=>{ metric=e.target.value; drawChart(); };
+document.getElementById("embed").onchange = e=>{ embed=e.target.value; drawScatter(); };
+
+// ---------- legend ----------
+(function legend(){
+  const L=document.getElementById("legend");
+  DATA.clusters.forEach(c=>{ const s=document.createElement("span");
+    s.innerHTML=`<span class="dot" style="background:${PALETTE[c.id%PALETTE.length]}"></span>cluster ${c.id} (${c.population})`;
+    L.appendChild(s); });
+})();
+
+// ---------- scatter (canvas) ----------
+const sc = document.getElementById("scatter"), sx = sc.getContext("2d");
+let pts = [];  // screen coords for hit-testing
+function embedKeys(){ return embed==="tsne" && ("tsne1" in F[0]) ? ["tsne1","tsne2"] : ["pc1","pc2"]; }
+function drawScatter(){
+  const [kx,ky]=embedKeys(); const W=sc.width,H=sc.height,pad=28;
+  const xs=F.map(f=>f[kx]), ys=F.map(f=>f[ky]);
+  const xmin=Math.min(...xs),xmax=Math.max(...xs),ymin=Math.min(...ys),ymax=Math.max(...ys);
+  const mapx=x=>pad+(x-xmin)/((xmax-xmin)||1)*(W-2*pad);
+  const mapy=y=>H-pad-(y-ymin)/((ymax-ymin)||1)*(H-2*pad);
+  sx.clearRect(0,0,W,H); pts=[];
+  F.forEach((f,i)=>{ const X=mapx(f[kx]),Y=mapy(f[ky]); pts.push([X,Y]);
+    sx.globalAlpha = (f.frame<EQ)?0.18:0.9;
+    sx.fillStyle = PALETTE[(f.cluster|0)%PALETTE.length];
+    sx.beginPath(); sx.arc(X,Y,4,0,7); sx.fill(); });
+  sx.globalAlpha=1;
+  const c=pts[cur]; if(c){ sx.strokeStyle="#111"; sx.lineWidth=2.5;
+    sx.beginPath(); sx.arc(c[0],c[1],7,0,7); sx.stroke(); }
+  sx.fillStyle="#8a94a0"; sx.font="11px sans-serif";
+  sx.fillText(embed==="tsne"?"t-SNE 1":"PC1", W/2-16, H-8);
+  sx.save(); sx.translate(12,H/2); sx.rotate(-Math.PI/2);
+  sx.fillText(embed==="tsne"?"t-SNE 2":"PC2",0,0); sx.restore();
+}
+sc.addEventListener("click", ev=>{
+  const r=sc.getBoundingClientRect(), sX=sc.width/r.width, sY=sc.height/r.height;
+  const mx=(ev.clientX-r.left)*sX, my=(ev.clientY-r.top)*sY;
+  let best=-1,bd=1e9; pts.forEach((p,i)=>{ const d=(p[0]-mx)**2+(p[1]-my)**2; if(d<bd){bd=d;best=i;} });
+  if(best>=0 && bd<400){ select(best); }
+});
+
+// ---------- selection panel ----------
+function clusterOf(cid){ return DATA.clusters.find(c=>c.id===cid); }
+function select(i){
+  cur=i; const f=F[i];
+  document.getElementById("slider").value=i;
+  document.getElementById("fpos").textContent=`frame ${f.frame} / ${F.length-1}  ·  ${fmt(f.time_ps)} ps`;
+  document.getElementById("selinfo").innerHTML=`frame <b>${f.frame}</b> · cluster <b>${f.cluster}</b> · ${fmt(f.time_ps)} ps`;
+  const tb=document.getElementById("seltbl"); tb.innerHTML="";
+  METRICS.forEach(m=>{ if(m in f){ const tr=tb.insertRow();
+    tr.insertCell().textContent=LABELS[m]; tr.insertCell().textContent=fmt(f[m]); } });
+  const ri=document.getElementById("repimg"); ri.innerHTML="";
+  const cl=clusterOf(f.cluster);
+  if(cl){ cl.images.forEach(src=>{ const im=new Image(); im.src=src; ri.appendChild(im); }); }
+  drawScatter(); drawChart();
+}
+
+// ---------- time slider + play ----------
+const slider=document.getElementById("slider"); slider.max=F.length-1;
+slider.oninput=e=>select(+e.target.value);
+document.getElementById("play").onclick=function(){
+  if(playing){ clearInterval(playing); playing=null; this.textContent="▶"; }
+  else { this.textContent="⏸"; playing=setInterval(()=>select((cur+1)%F.length),120); }
+};
+
+// ---------- time-series chart (canvas) ----------
+const ch=document.getElementById("chart"), cx=ch.getContext("2d");
+function drawChart(){
+  const W=ch.width,H=ch.height,pad=40; const ys=F.map(f=>f[metric]);
+  const ymin=Math.min(...ys),ymax=Math.max(...ys);
+  const mapx=i=>pad+i/((F.length-1)||1)*(W-1.4*pad);
+  const mapy=y=>H-pad-(y-ymin)/((ymax-ymin)||1)*(H-1.6*pad);
+  cx.clearRect(0,0,W,H);
+  if(EQ>0){ cx.fillStyle="#eef0f4"; cx.fillRect(pad,pad*0.4,mapx(EQ)-pad,H-pad-pad*0.4); }
+  cx.strokeStyle="#c9ced6"; cx.lineWidth=1; cx.beginPath();
+  cx.moveTo(pad,H-pad); cx.lineTo(W-0.4*pad,H-pad); cx.moveTo(pad,pad*0.4); cx.lineTo(pad,H-pad); cx.stroke();
+  cx.strokeStyle=PALETTE[0]; cx.lineWidth=1.4; cx.beginPath();
+  F.forEach((f,i)=>{ const X=mapx(i),Y=mapy(f[metric]); i?cx.lineTo(X,Y):cx.moveTo(X,Y); }); cx.stroke();
+  const X=mapx(cur); cx.strokeStyle="#111"; cx.lineWidth=1.2; cx.setLineDash([4,3]);
+  cx.beginPath(); cx.moveTo(X,pad*0.4); cx.lineTo(X,H-pad); cx.stroke(); cx.setLineDash([]);
+  cx.fillStyle="#8a94a0"; cx.font="11px sans-serif";
+  cx.fillText(LABELS[metric],pad,pad*0.3+2);
+  cx.fillText(fmt(ymax),4,pad*0.4+8); cx.fillText(fmt(ymin),4,H-pad);
+  cx.fillText("frame",W/2,H-8);
+}
+
+drawScatter(); drawChart(); select(0);
+</script>
+</body>
+</html>

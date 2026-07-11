@@ -30,3 +30,6 @@ data/md_dryrun/
 *.xtc
 *.trr
 *.chk
+
+# Stage 3 demo outputs (regenerable)
+data/md_demo/

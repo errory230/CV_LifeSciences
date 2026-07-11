@@ -61,12 +61,20 @@ Logic validated end-to-end on a CPU OpenMM platform (T1 dry-run).
 Design note: MD is the expensive step, which is why stage 1 selects a small,
 flexibility-balanced subset and stage 2a keeps solvation off the CPU box.
 
-## Stage 3 — Ensemble descriptors & QSAR
+## Stage 3 — Ensemble descriptors + explorer 🟡 (descriptors done; QSAR next)
 
-- [ ] Per-conformer 3D descriptors (shape, PSA/3D-PSA, radius of gyration,
-      solvent-accessible surface, WHIM/GETAWAY, pharmacophore features).
-- [ ] Aggregate to the molecule: Boltzmann-weighted means, spread, and
-      distribution features across the ensemble.
+`ensemble_qsar/features/`, `ensemble_qsar/viz/`, `scripts/20_export_viz.py`,
+`scripts/21_build_all.py`. Verified end-to-end on a Stage-2 output.
+- [x] Per-frame 3D descriptors: 3D-PSA, Rg, SASA, intramolecular H-bonds (with
+      recorded criteria), plus PCA/t-SNE/RMSD from Stage 2.
+- [x] Aggregate to a per-molecule feature row (distribution stats + population-
+      weighted ensemble mean) → `features.csv`; Stage-1 label join by `mol_id`.
+- [x] **Self-contained HTML explorer** per molecule (data exporter →
+      `viz_data.json` → molecule-agnostic viewer): t-SNE/PCA scatter (click a
+      conformer), time slider + play, descriptor time series, cluster
+      representative 3D images (matplotlib, base64-embedded). Single file, no
+      server/CDN. `index.html` links all molecules.
+- [ ] Per-conformer WHIM/GETAWAY/pharmacophore features (optional richer set).
 - [ ] Train QSAR models (endpoint per dataset) on **static** vs **ensemble**
       features with identical splits.
 
