@@ -1,7 +1,7 @@
 {
   "mol_id": "Dronedarone",
   "smiles": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-  "path": "data/prep/caco2/Dronedarone",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone",
   "mol_class": "small_molecule",
   "class_evidence": [
     "residues(N-Ca-C=O)=0",
@@ -11,8 +11,8 @@
   ],
   "needs_review": false,
   "ph": 7.4,
-  "protonation_state": "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-  "net_charge": -1,
+  "protonation_state": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
+  "net_charge": 0,
   "charge_method": "AM1-BCC (antechamber/sqm)",
   "forcefield": "GAFF2",
   "water_model_planned": "tip3p",
@@ -55,15 +55,15 @@
       "outputs": [],
       "info": {
         "tool": "dimorphite-dl 2.0.2",
-        "state": "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-        "net_charge": -1,
+        "state": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
+        "net_charge": 0,
         "variants": [
-          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-          "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1",
           "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1"
+          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1",
+          "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1",
+          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1"
         ],
-        "note": "4 microstate(s); 0 implausible dropped; dominant selected"
+        "note": "4 microstate(s); 2 implausible dropped; dominant selected"
       }
     },
     {
@@ -71,22 +71,13 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "data/prep/caco2/Dronedarone/intermediates/conformer.sdf"
+        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/conformer.sdf"
       ],
       "info": {
-        "energy": 87.0449,
+        "energy": 7.0043,
         "ff": "MMFF94s",
         "tried": 20,
-        "converged": 10
-      }
-    },
-    {
-      "name": "charges",
-      "status": "failed",
-      "seconds": 0.238,
-      "outputs": [],
-      "info": {
-        "stderr_tail": "/root/miniconda3/envs/mdsprep/bin/wrapped_progs/antechamber: Fatal Error!\nCannot open the input file (data/prep/caco2/Dronedarone/intermediates/conformer.sdf).\nNo such file or directory\n"
+        "converged": 12
       }
     }
   ],

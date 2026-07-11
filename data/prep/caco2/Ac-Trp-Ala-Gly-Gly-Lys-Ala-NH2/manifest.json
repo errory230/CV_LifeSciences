@@ -1,7 +1,7 @@
 {
   "mol_id": "Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
   "smiles": "CC(=O)N[C@@H](Cc1c[nH]c2ccccc12)C(=O)N[C@@H](C)C(=O)NCC(=O)NCC(=O)N[C@@H](CCCCN)C(=O)N[C@@H](C)C(N)=O",
-  "path": "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
   "mol_class": "peptide",
   "class_evidence": [
     "residues(N-Ca-C=O)=6",
@@ -72,8 +72,8 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/peptide_gas.prmtop",
-        "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/leap_solvate.in"
+        "/home/user/CV_LifeSciences/data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/peptide_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/leap_solvate.in"
       ],
       "info": {
         "residues": [
