@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/user/CV_LifeSciences/scripts/03_prep_batch.py", line 70, in main
+    m = prep_molecule(mid, smi, out_root=args.out_root, config=cfg)
+  File "/home/user/CV_LifeSciences/ensemble_qsar/prep/pipeline.py", line 104, in prep_molecule
+    raise RuntimeError(f"{mol_id}: AM1-BCC charge assignment failed")
+RuntimeError: Roxithromycin: AM1-BCC charge assignment failed

@@ -1,0 +1,94 @@
+{
+  "mol_id": "25e",
+  "smiles": "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)N2CCN(CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+  "path": "data/prep/caco2/25e",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=1",
+    "amide_bonds=4",
+    "largest_ring=6",
+    "class=small_molecule (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)N2CC[NH+](CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+  "net_charge": 1,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 1,
+        "n_amide_bonds": 4,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=1",
+          "amide_bonds=4",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)N2CC[NH+](CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+        "net_charge": 1,
+        "variants": [
+          "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)N2CC[NH+](CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+          "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)N2CCN(CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+          "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)[NH+]2CC[NH+](CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1",
+          "O=C(NC1(C(=O)N[C@H](Cc2ccccc2)C(=O)NCCC(=O)[NH+]2CCN(CC3CCOCC3)CC2)CCCC1)c1cc2ccccc2s1"
+        ],
+        "note": "4 microstate(s); 2 implausible dropped; dominant selected"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "data/prep/caco2/25e/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 100.4584,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 2
+      }
+    },
+    {
+      "name": "charges",
+      "status": "failed",
+      "seconds": 0.008,
+      "outputs": [],
+      "info": {
+        "stderr_tail": "/root/miniconda3/envs/mdsprep/bin/wrapped_progs/antechamber: Fatal Error!\nCannot open the input file (data/prep/caco2/25e/intermediates/conformer.sdf).\nNo such file or directory\n"
+      }
+    }
+  ],
+  "handoff_files": []
+}

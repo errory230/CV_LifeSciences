@@ -1,0 +1,96 @@
+{
+  "mol_id": "Roxithromycin",
+  "smiles": "CC[C@@H]1OC(=O)[C@@H](C)[C@H](O[C@@H]2C[C@](C)(OC)[C@H](O)[C@@H](C)O2)[C@H](C)[C@H](O[C@@H]2O[C@H](C)C[C@H](N(C)C)[C@H]2O)[C@@](C)(O)C[C@@H](C)/C(=N\\OCOCCOC)[C@H](C)[C@@H](O)[C@@]1(C)O",
+  "path": "data/prep/caco2/Roxithromycin",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=0",
+    "largest_ring=14",
+    "class=small_molecule (rule: residues>=3 -> peptide)",
+    "REVIEW: macrocycle (ring>=12); explicit ring-closure topology needed",
+    "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+  ],
+  "needs_review": true,
+  "ph": 7.4,
+  "protonation_state": "CC[C@@H]1OC(=O)[C@@H](C)[C@H](O[C@@H]2C[C@](C)(OC)[C@H](O)[C@@H](C)O2)[C@H](C)[C@H](O[C@@H]2O[C@H](C)C[C@H](N(C)C)[C@H]2O)[C@@](C)(O)C[C@@H](C)/C(=N\\OCOCCOC)[C@H](C)[C@@H](O)[C@@]1(C)O",
+  "net_charge": 0,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": true,
+        "n_residues": 0,
+        "n_amide_bonds": 0,
+        "largest_ring": 14,
+        "is_macrocycle": true,
+        "has_ester": true,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": true,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=0",
+          "largest_ring=14",
+          "class=small_molecule (rule: residues>=3 -> peptide)",
+          "REVIEW: macrocycle (ring>=12); explicit ring-closure topology needed",
+          "REVIEW: carbohydrate-like -> GLYCAM recommended over GAFF"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "CC[C@@H]1OC(=O)[C@@H](C)[C@H](O[C@@H]2C[C@](C)(OC)[C@H](O)[C@@H](C)O2)[C@H](C)[C@H](O[C@@H]2O[C@H](C)C[C@H](N(C)C)[C@H]2O)[C@@](C)(O)C[C@@H](C)/C(=N\\OCOCCOC)[C@H](C)[C@@H](O)[C@@]1(C)O",
+        "net_charge": 0,
+        "variants": [
+          "CC[C@@H]1OC(=O)[C@@H](C)[C@H](O[C@@H]2C[C@](C)(OC)[C@H](O)[C@@H](C)O2)[C@H](C)[C@H](O[C@@H]2O[C@H](C)C[C@H](N(C)C)[C@H]2O)[C@@](C)(O)C[C@@H](C)/C(=N\\OCOCCOC)[C@H](C)[C@@H](O)[C@@]1(C)O",
+          "CC[C@@H]1OC(=O)[C@@H](C)[C@H](O[C@@H]2C[C@](C)(OC)[C@H](O)[C@@H](C)O2)[C@H](C)[C@H](O[C@@H]2O[C@H](C)C[C@H]([NH+](C)C)[C@H]2O)[C@@](C)(O)C[C@@H](C)/C(=N\\OCOCCOC)[C@H](C)[C@@H](O)[C@@]1(C)O"
+        ],
+        "note": "2 microstate(s); 0 implausible dropped; dominant selected"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "data/prep/caco2/Roxithromycin/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 260.5641,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 0
+      }
+    },
+    {
+      "name": "charges",
+      "status": "failed",
+      "seconds": 0.009,
+      "outputs": [],
+      "info": {
+        "stderr_tail": "/root/miniconda3/envs/mdsprep/bin/wrapped_progs/antechamber: Fatal Error!\nCannot open the input file (data/prep/caco2/Roxithromycin/intermediates/conformer.sdf).\nNo such file or directory\n"
+      }
+    }
+  ],
+  "handoff_files": []
+}

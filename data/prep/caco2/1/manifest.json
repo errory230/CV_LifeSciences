@@ -1,0 +1,92 @@
+{
+  "mol_id": "1",
+  "smiles": "CCCN(Cc1ccoc1)C(=O)c1cc(C)cc(OCC2(CON=C(N)N)CC2)c1",
+  "path": "data/prep/caco2/1",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=1",
+    "largest_ring=6",
+    "class=small_molecule (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "CCCN(Cc1ccoc1)C(=O)c1cc(C)cc(OCC2(CO[NH+]=C(N)N)CC2)c1",
+  "net_charge": 1,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 0,
+        "n_amide_bonds": 1,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=1",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "CCCN(Cc1ccoc1)C(=O)c1cc(C)cc(OCC2(CO[NH+]=C(N)N)CC2)c1",
+        "net_charge": 1,
+        "variants": [
+          "CCCN(Cc1ccoc1)C(=O)c1cc(C)cc(OCC2(CO[NH+]=C(N)N)CC2)c1",
+          "CCC[NH+](Cc1ccoc1)C(=O)c1cc(C)cc(OCC2(CO[NH+]=C(N)N)CC2)c1"
+        ],
+        "note": "2 microstate(s); 1 implausible dropped; dominant selected"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "data/prep/caco2/1/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": -109.037,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 10
+      }
+    },
+    {
+      "name": "charges",
+      "status": "failed",
+      "seconds": 0.008,
+      "outputs": [],
+      "info": {
+        "stderr_tail": "/root/miniconda3/envs/mdsprep/bin/wrapped_progs/antechamber: Fatal Error!\nCannot open the input file (data/prep/caco2/1/intermediates/conformer.sdf).\nNo such file or directory\n"
+      }
+    }
+  ],
+  "handoff_files": []
+}

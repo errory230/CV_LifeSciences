@@ -1,0 +1,101 @@
+{
+  "mol_id": "Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
+  "smiles": "CC(=O)N[C@@H](Cc1c[nH]c2ccccc12)C(=O)N[C@@H](C)C(=O)NCC(=O)NCC(=O)N[C@@H](CCCCN)C(=O)N[C@@H](C)C(N)=O",
+  "path": "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2",
+  "mol_class": "peptide",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=6",
+    "amide_bonds=7",
+    "largest_ring=6",
+    "class=peptide (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "ff19SB standard states @ pH 7.4 (LYS+/ARG+/ASP-/GLU-/HIS=HIE)",
+  "net_charge": 1,
+  "charge_method": "protein force-field library charges",
+  "forcefield": "ff19SB",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "peptide",
+        "needs_review": false,
+        "n_residues": 6,
+        "n_amide_bonds": 7,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=6",
+          "amide_bonds=7",
+          "largest_ring=6",
+          "class=peptide (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "sequence",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "residues": [
+          "ACE",
+          "TRP",
+          "ALA",
+          "GLY",
+          "GLY",
+          "LYS",
+          "ALA",
+          "NHE"
+        ],
+        "notes": []
+      }
+    },
+    {
+      "name": "parameterize",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/peptide_gas.prmtop",
+        "data/prep/caco2/Ac-Trp-Ala-Gly-Gly-Lys-Ala-NH2/intermediates/leap_solvate.in"
+      ],
+      "info": {
+        "residues": [
+          "ACE",
+          "TRP",
+          "ALA",
+          "GLY",
+          "GLY",
+          "LYS",
+          "ALA",
+          "NHE"
+        ],
+        "net_charge": 1,
+        "cyclic": false,
+        "messages": []
+      }
+    }
+  ],
+  "handoff_files": [
+    "peptide_gas.prmtop",
+    "peptide_gas.rst7",
+    "peptide_capped.pdb",
+    "leap_solvate.in"
+  ]
+}
