@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/user/CV_LifeSciences/scripts/03_prep_batch.py", line 70, in main
+    m = prep_molecule(mid, smi, out_root=args.out_root, config=cfg)
+  File "/home/user/CV_LifeSciences/ensemble_qsar/prep/pipeline.py", line 76, in prep_molecule
+    return _prep_peptide(m, mol_id, smiles, mol_dir, work, cfg, cls)
+  File "/home/user/CV_LifeSciences/ensemble_qsar/prep/pipeline.py", line 174, in _prep_peptide
+    raise PeptideSequenceUnknown(f"{mol_id}: {seq.notes}")
+ensemble_qsar.prep.pipeline.PeptideSequenceUnknown: S2: ['name is not a hyphenated peptide']

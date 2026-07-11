@@ -1,0 +1,66 @@
+{
+  "mol_id": "S2",
+  "smiles": "C=CCNC(=O)C(=O)C(CCC)NC(=O)C1C2C(CN1C(=O)C(NC(=O)NC(C(=O)C(C)C)C(C)C)C(C)(C)C)C2(C)C",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/S2",
+  "mol_class": "peptide",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=4",
+    "amide_bonds=5",
+    "largest_ring=5",
+    "class=peptide (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": true,
+  "ph": 7.4,
+  "protonation_state": "",
+  "net_charge": null,
+  "charge_method": "protein force-field library charges",
+  "forcefield": "ff19SB",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "peptide",
+        "needs_review": false,
+        "n_residues": 4,
+        "n_amide_bonds": 5,
+        "largest_ring": 5,
+        "is_macrocycle": false,
+        "has_ester": false,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=4",
+          "amide_bonds=5",
+          "largest_ring=5",
+          "class=peptide (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "route",
+      "status": "skipped",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "reason": "peptide sequence not parseable from name",
+        "detail": [
+          "name is not a hyphenated peptide"
+        ],
+        "todo": "automatic SMILES->sequence perception is future work"
+      }
+    }
+  ],
+  "handoff_files": []
+}
