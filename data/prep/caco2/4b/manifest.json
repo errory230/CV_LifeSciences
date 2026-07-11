@@ -1,18 +1,18 @@
 {
-  "mol_id": "Dronedarone",
-  "smiles": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-  "path": "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone",
+  "mol_id": "4b",
+  "smiles": "CC(C)CNC(=O)[C@H](C)NC[C@H](Cc1ccccc1)NC(=O)c1cc(C(=O)N[C@H](C)c2ccc(F)cc2)cc(N(C)S(C)(=O)=O)c1",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/4b",
   "mol_class": "small_molecule",
   "class_evidence": [
-    "residues(N-Ca-C=O)=0",
-    "amide_bonds=0",
+    "residues(N-Ca-C=O)=1",
+    "amide_bonds=3",
     "largest_ring=6",
     "class=small_molecule (rule: residues>=3 -> peptide)"
   ],
   "needs_review": false,
   "ph": 7.4,
-  "protonation_state": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-  "net_charge": 0,
+  "protonation_state": "CC(C)CNC(=O)[C@H](C)[NH2+]C[C@H](Cc1ccccc1)NC(=O)c1cc(C(=O)N[C@H](C)c2ccc(F)cc2)cc(N(C)S(C)(=O)=O)c1",
+  "net_charge": 1,
   "charge_method": "AM1-BCC (antechamber/sqm)",
   "forcefield": "GAFF2",
   "water_model_planned": "tip3p",
@@ -32,8 +32,8 @@
       "info": {
         "mol_class": "small_molecule",
         "needs_review": false,
-        "n_residues": 0,
-        "n_amide_bonds": 0,
+        "n_residues": 1,
+        "n_amide_bonds": 3,
         "largest_ring": 6,
         "is_macrocycle": false,
         "has_ester": false,
@@ -41,8 +41,8 @@
         "is_carbohydrate_like": false,
         "net_formal_charge": 0,
         "evidence": [
-          "residues(N-Ca-C=O)=0",
-          "amide_bonds=0",
+          "residues(N-Ca-C=O)=1",
+          "amide_bonds=3",
           "largest_ring=6",
           "class=small_molecule (rule: residues>=3 -> peptide)"
         ]
@@ -55,15 +55,13 @@
       "outputs": [],
       "info": {
         "tool": "dimorphite-dl 2.0.2",
-        "state": "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-        "net_charge": 0,
+        "state": "CC(C)CNC(=O)[C@H](C)[NH2+]C[C@H](Cc1ccccc1)NC(=O)c1cc(C(=O)N[C@H](C)c2ccc(F)cc2)cc(N(C)S(C)(=O)=O)c1",
+        "net_charge": 1,
         "variants": [
-          "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1",
-          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1",
-          "CCCCc1oc2ccc(NS(C)(=O)=O)cc2c1C(=O)c1ccc(OCCC[NH+](CCCC)CCCC)cc1",
-          "CCCCc1oc2ccc([N-]S(C)(=O)=O)cc2c1C(=O)c1ccc(OCCCN(CCCC)CCCC)cc1"
+          "CC(C)CNC(=O)[C@H](C)[NH2+]C[C@H](Cc1ccccc1)NC(=O)c1cc(C(=O)N[C@H](C)c2ccc(F)cc2)cc(N(C)S(C)(=O)=O)c1",
+          "CC(C)CNC(=O)[C@H](C)NC[C@H](Cc1ccccc1)NC(=O)c1cc(C(=O)N[C@H](C)c2ccc(F)cc2)cc(N(C)S(C)(=O)=O)c1"
         ],
-        "note": "4 microstate(s); 2 implausible dropped; dominant selected"
+        "note": "2 microstate(s); 0 implausible dropped; dominant selected"
       }
     },
     {
@@ -71,21 +69,21 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/conformer.sdf"
+        "/home/user/CV_LifeSciences/data/prep/caco2/4b/intermediates/conformer.sdf"
       ],
       "info": {
-        "energy": 7.0043,
+        "energy": 4.2611,
         "ff": "MMFF94s",
         "tried": 20,
-        "converged": 12
+        "converged": 0
       }
     },
     {
       "name": "charges",
       "status": "ok",
-      "seconds": 155.428,
+      "seconds": 170.953,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/ligand.mol2"
+        "/home/user/CV_LifeSciences/data/prep/caco2/4b/intermediates/ligand.mol2"
       ],
       "info": {
         "method": "AM1-BCC (antechamber/sqm)",
@@ -97,9 +95,9 @@
       "status": "ok",
       "seconds": 0.0,
       "outputs": [
-        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/ligand.frcmod",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/ligand_gas.prmtop",
-        "/home/user/CV_LifeSciences/data/prep/caco2/Dronedarone/intermediates/leap_solvate.in"
+        "/home/user/CV_LifeSciences/data/prep/caco2/4b/intermediates/ligand.frcmod",
+        "/home/user/CV_LifeSciences/data/prep/caco2/4b/intermediates/ligand_gas.prmtop",
+        "/home/user/CV_LifeSciences/data/prep/caco2/4b/intermediates/leap_solvate.in"
       ],
       "info": {
         "messages": []

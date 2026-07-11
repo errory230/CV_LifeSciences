@@ -1,0 +1,82 @@
+{
+  "mol_id": "3",
+  "smiles": "COC(=O)C[C@@H](C(=O)NN(Cc1ccc(/C=C\\c2ccccc2)cc1)C[C@@](O)(Cc1ccccc1)C(=O)NC1c2ccccc2C[C@H]1O)C(C)(C)C",
+  "path": "/home/user/CV_LifeSciences/data/prep/caco2/3",
+  "mol_class": "small_molecule",
+  "class_evidence": [
+    "residues(N-Ca-C=O)=0",
+    "amide_bonds=2",
+    "largest_ring=6",
+    "class=small_molecule (rule: residues>=3 -> peptide)"
+  ],
+  "needs_review": false,
+  "ph": 7.4,
+  "protonation_state": "COC(=O)C[C@@H](C(=O)NN(Cc1ccc(/C=C\\c2ccccc2)cc1)C[C@@](O)(Cc1ccccc1)C(=O)NC1c2ccccc2C[C@H]1O)C(C)(C)C",
+  "net_charge": 0,
+  "charge_method": "AM1-BCC (antechamber/sqm)",
+  "forcefield": "GAFF2",
+  "water_model_planned": "tip3p",
+  "random_seed": 42,
+  "tool_versions": {
+    "antechamber": "antechamber: /root/miniconda3/envs/mdsprep/bin/antechamber",
+    "parmchk2": "parmchk2: /root/miniconda3/envs/mdsprep/bin/parmchk2",
+    "tleap": "tleap: /root/miniconda3/envs/mdsprep/bin/tleap",
+    "sqm": "sqm: /root/miniconda3/envs/mdsprep/bin/sqm"
+  },
+  "steps": [
+    {
+      "name": "classify",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "mol_class": "small_molecule",
+        "needs_review": false,
+        "n_residues": 0,
+        "n_amide_bonds": 2,
+        "largest_ring": 6,
+        "is_macrocycle": false,
+        "has_ester": true,
+        "has_nmethyl_amide": false,
+        "is_carbohydrate_like": false,
+        "net_formal_charge": 0,
+        "evidence": [
+          "residues(N-Ca-C=O)=0",
+          "amide_bonds=2",
+          "largest_ring=6",
+          "class=small_molecule (rule: residues>=3 -> peptide)"
+        ]
+      }
+    },
+    {
+      "name": "protonate",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [],
+      "info": {
+        "tool": "dimorphite-dl 2.0.2",
+        "state": "COC(=O)C[C@@H](C(=O)NN(Cc1ccc(/C=C\\c2ccccc2)cc1)C[C@@](O)(Cc1ccccc1)C(=O)NC1c2ccccc2C[C@H]1O)C(C)(C)C",
+        "net_charge": 0,
+        "variants": [
+          "COC(=O)C[C@@H](C(=O)[N-]N(Cc1ccc(/C=C\\c2ccccc2)cc1)C[C@@](O)(Cc1ccccc1)C(=O)NC1c2ccccc2C[C@H]1O)C(C)(C)C"
+        ],
+        "note": "all enumerated variants implausible (amidate); input kept"
+      }
+    },
+    {
+      "name": "conformer",
+      "status": "ok",
+      "seconds": 0.0,
+      "outputs": [
+        "/home/user/CV_LifeSciences/data/prep/caco2/3/intermediates/conformer.sdf"
+      ],
+      "info": {
+        "energy": 179.5814,
+        "ff": "MMFF94s",
+        "tried": 20,
+        "converged": 2
+      }
+    }
+  ],
+  "handoff_files": []
+}
