@@ -65,9 +65,43 @@ def test_pdb_fallback_parses_coords():
     p.unlink()
 
 
+def test_hub_thumbnail_and_build():
+    import json
+    import shutil
+    from ensemble_qsar.viz import build_hub
+
+    svg = build_hub.render_thumbnail("CCO")
+    assert svg.startswith("<svg") and "</svg>" in svg
+    assert build_hub.render_thumbnail("not_a_smiles") == ""
+
+    root = Path("/tmp/_hubtest")
+    shutil.rmtree(root, ignore_errors=True)
+    done = root / "molA"; done.mkdir(parents=True)
+    (done / "run_manifest.json").write_text(json.dumps(
+        {"prep_manifest": {"mol_id": "molA", "mol_class": "small_molecule"}}))
+    (done / "viz_data.json").write_text(json.dumps({
+        "meta": {"mol_id": "molA", "smiles": "CCO", "n_frames": 10, "equilibration_frame": 0},
+        "clusters": [{"id": 0}],
+        "summary": {m: {"mean": 1.0, "std": 0.1} for m in
+                    ("psa3d", "rg", "intra_hbond", "sasa", "rmsd")}}))
+    pend = root / "molB"; pend.mkdir()
+    (pend / "manifest.json").write_text(json.dumps({"mol_id": "molB", "mol_class": "peptide"}))
+
+    hub = build_hub.collect_hub_index(root)
+    assert hub["n_molecules"] == 1 and hub["n_pending"] == 1
+    assert hub["molecules"][0]["mw"] is not None  # MW computed from SMILES
+
+    html_path, _ = build_hub.build_hub(root)
+    html = html_path.read_text()
+    assert "__HUB_DATA__" not in html               # data injected
+    assert 'src="http' not in html and 'href="http' not in html  # no external loads
+    shutil.rmtree(root, ignore_errors=True)
+
+
 if __name__ == "__main__":
     test_molecule_features_flatten()
     test_features_table_label_join()
     test_build_html_self_contained()
     test_pdb_fallback_parses_coords()
+    test_hub_thumbnail_and_build()
     print("all viz tests passed")

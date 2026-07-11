@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from ensemble_qsar.features import aggregate  # noqa: E402
-from ensemble_qsar.viz import build_html, export  # noqa: E402
+from ensemble_qsar.viz import build_hub, build_html, export  # noqa: E402
 
 
 def main() -> None:
@@ -33,28 +33,25 @@ def main() -> None:
                   if (d / "analysis" / "metrics.csv").exists())
     print(f"found {len(dirs)} completed molecule(s)")
 
-    viz_list, entries = [], []
+    viz_list = []
     for d in dirs:
         try:
             viz = export.build_viz_data(d, equilibration_frame=args.equilibration_frame)
             mol_id = viz["meta"]["mol_id"]
             (d / "viz_data.json").write_text(json.dumps(viz))
-            href = str((d / f"explore_{mol_id}.html").resolve())
             build_html.build_html(viz, d / f"explore_{mol_id}.html")
             aggregate.write_feature_detail(viz, d / "feature_detail.json")
             viz_list.append(viz)
-            entries.append({"mol_id": mol_id, "href": href,
-                            "n_frames": viz["meta"]["n_frames"], "n_clusters": len(viz["clusters"])})
             print(f"  [ok] {mol_id}")
         except Exception as e:  # noqa: BLE001 fail-soft
             print(f"  [FAILED] {d.name}: {type(e).__name__}: {e}")
             (args.md_root / f"_error_{d.name}.txt").write_text(traceback.format_exc())
 
+    # catalog hub (scans viz_data.json on disk; lists incomplete dirs as pending)
+    html_path, _ = build_hub.build_hub(args.md_root)
     if viz_list:
-        build_html.build_index(entries, args.md_root / "index.html")
         aggregate.build_features_table(viz_list).to_csv(args.md_root / "features.csv", index=False)
-        print(f"\nwrote {args.md_root/'index.html'} and {args.md_root/'features.csv'} "
-              f"({len(viz_list)} molecules)")
+    print(f"\nwrote {html_path} and {args.md_root/'features.csv'} ({len(viz_list)} molecules)")
 
 
 if __name__ == "__main__":
