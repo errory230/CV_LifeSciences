@@ -22,7 +22,7 @@ import json
 import os
 from pathlib import Path
 
-os.environ.setdefault("MPLBACKEND", "Agg")
+os.environ["MPLBACKEND"] = "Agg"   # override Colab/IPython inline backend
 import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
