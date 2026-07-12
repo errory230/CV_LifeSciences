@@ -33,6 +33,9 @@ def main() -> None:
     ap.add_argument("--outdir", type=Path, default=ROOT / "results/stage4")
     ap.add_argument("--burnin-frac", type=float, default=0.0,
                     help="discard this fraction of leading frames as burn-in")
+    ap.add_argument("--case-molecules", nargs="+", default=None,
+                    help="explicit mol_ids for Analysis 2 (default: auto rigid+flexible)")
+    ap.add_argument("--n-each", type=int, default=2, help="Analysis 2 molecules per extreme")
     args = ap.parse_args()
     args.outdir.mkdir(parents=True, exist_ok=True)
 
@@ -45,14 +48,22 @@ def main() -> None:
         print("no completed molecules with extracted features yet."); return
 
     table.to_csv(args.outdir / "ensemble_dispersion_table.csv", index=False)
-    png = stage4.plot_analysis1(table, args.outdir / "analysis1_dispersion_vs_flexibility.png")
-    print(f"\nAnalysis 1 -> {png}")
+    png1 = stage4.plot_analysis1(table, args.outdir / "analysis1_dispersion_vs_flexibility.png")
+    print(f"\nAnalysis 1 -> {png1}  (3D-PSA + Rg dispersion vs flexibility)")
     print(f"table      -> {args.outdir / 'ensemble_dispersion_table.csv'}")
+
+    # Analysis 2: case-study distributions (auto rigid vs flexible, or explicit)
+    cases = stage4.case_study(args.md_root, table, mol_ids=args.case_molecules, n_each=args.n_each)
+    if cases:
+        png2 = stage4.plot_analysis2(cases, args.outdir / "analysis2_casestudy_distributions.png")
+        print(f"Analysis 2 -> {png2}  (cases: {', '.join(c['mol_id'] for c in cases)})")
+
     # quick text preview by flex class
-    if "flex_class" in table:
-        g = table.groupby("flex_class", observed=True)["psa3d_std"].agg(["count", "mean"])
-        print("\nmean per-frame 3D-PSA std by flex_class:")
-        print(g.to_string())
+    for d in ("psa3d", "rg"):
+        col = f"{d}_std"
+        if col in table:
+            g = table.groupby("flex_class", observed=True)[col].agg(["count", "mean"])
+            print(f"\nmean per-frame {d} std by flex_class:\n{g.to_string()}")
 
 
 if __name__ == "__main__":
