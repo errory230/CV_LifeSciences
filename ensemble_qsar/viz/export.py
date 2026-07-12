@@ -41,7 +41,8 @@ def _stats(v: np.ndarray) -> dict:
 
 def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
                    render_angles=None, animate: bool = True,
-                   animation_max_frames: int = 250, projection_decimals: int = 2) -> dict:
+                   animation_max_frames: int = 250, projection_decimals: int = 2,
+                   render_cluster_images: bool = False) -> dict:
     md_dir = Path(md_dir)
     metrics = pd.read_csv(md_dir / "analysis" / "metrics.csv").rename(columns=_RENAME)
 
@@ -103,7 +104,9 @@ def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
             "id": cid,
             "population": int(len(members)),
             "rep_frame": rep_frame,
-            "images": render3d.render_structure(pdb, angles=render_angles),
+            # static cluster PNGs are superseded by the live conformation panel;
+            # render only if explicitly requested.
+            "images": render3d.render_structure(pdb, angles=render_angles) if render_cluster_images else [],
             "mean_metrics": {m: float(members[m].mean()) for m in _METRICS if m in members},
         })
 

@@ -59,7 +59,10 @@
     <h2>Selected conformation</h2>
     <div id="selinfo">Click a point (or use the slider).</div>
     <table class="metrics-tbl" id="seltbl"></table>
-    <div class="repimg" id="repimg"></div>
+    <div class="row" id="molrow" style="justify-content:center;gap:8px;margin-top:8px">
+      <canvas id="mol0" width="260" height="260" style="max-width:48%;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
+      <canvas id="mol1" width="260" height="260" style="max-width:48%;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
+    </div>
   </aside>
 
   <section class="panel full">
@@ -67,14 +70,6 @@
       <button class="play" id="play">▶</button>
       <input type="range" id="slider" min="0" max="0" value="0">
       <span id="fpos" style="color:var(--muted);min-width:120px;text-align:right"></span>
-    </div>
-  </section>
-
-  <section class="panel full" id="molpanel" style="display:none">
-    <h2>Live conformation <span class="muted" style="font-weight:400">— both view angles, current frame</span></h2>
-    <div class="row" style="justify-content:center;gap:18px">
-      <canvas id="mol0" width="300" height="300" style="max-width:46%"></canvas>
-      <canvas id="mol1" width="300" height="300" style="max-width:46%"></canvas>
     </div>
   </section>
 
@@ -165,9 +160,6 @@ function select(i){
   const tb=document.getElementById("seltbl"); tb.innerHTML="";
   METRICS.forEach(m=>{ if(m in f){ const tr=tb.insertRow();
     tr.insertCell().textContent=LABELS[m]; tr.insertCell().textContent=fmt(f[m]); } });
-  const ri=document.getElementById("repimg"); ri.innerHTML="";
-  const cl=clusterOf(f.cluster);
-  if(cl){ cl.images.forEach(src=>{ const im=new Image(); im.src=src; ri.appendChild(im); }); }
   drawScatter(); drawChart(); drawMolecule(cur);   // (a)(b)(c)(d) — single source of truth
 }
 
@@ -196,7 +188,7 @@ function drawMolecule(i){
     g.globalAlpha=1;
   });
 }
-if(PROJ){ document.getElementById("molpanel").style.display=""; }
+if(!PROJ){ document.getElementById("molrow").style.display="none"; }  // no animation data
 
 // ---------- time slider + play (requestAnimationFrame) ----------
 const slider=document.getElementById("slider"); slider.max=F.length-1;
