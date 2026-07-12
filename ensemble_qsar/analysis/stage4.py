@@ -82,16 +82,50 @@ def _mol_id(md_dir: Path) -> str:
     return md_dir.name
 
 
+def _traj_descriptors(md_dir: Path) -> dict | None:
+    """Recompute the ensemble descriptors NOT stored in metrics.csv (rg / sasa /
+    intra_hbond) straight from the solute trajectory — same as the Stage-3
+    exporter. Lets Stage 4 fill Rg for molecules whose viz_data.json was never
+    generated. Returns None if the trajectory/topology is unavailable."""
+    try:
+        from ..features import descriptors3d
+        from ..md.analyze import _solute_indices
+        prmtop = next((Path(md_dir) / "solvation").glob("*_solv.prmtop"), None)
+        dcd = Path(md_dir) / "trajectory.dcd"
+        if prmtop is None or not dcd.exists():
+            return None
+        traj = md.load(str(dcd), top=str(prmtop))
+        traj = traj.atom_slice(_solute_indices(traj.topology))
+        try:
+            traj.image_molecules(inplace=True)
+        except Exception:  # noqa: BLE001
+            pass
+        return descriptors3d.frame_descriptors(traj)
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _per_frame(md_dir: Path) -> pd.DataFrame | None:
-    """Per-frame descriptor table for one molecule (viz_data.json, else metrics)."""
+    """Per-frame descriptor table for one molecule (viz_data.json, else metrics).
+
+    metrics.csv only stores the permeability core (psa3d + rmsd); rg / sasa /
+    intra_hbond are recomputed from the trajectory on demand so every molecule
+    contributes Rg regardless of whether Stage-3 export was run for it."""
     viz = md_dir / "viz_data.json"
     if viz.exists():
         frames = json.loads(viz.read_text()).get("frames", [])
-        return pd.DataFrame(frames) if frames else None
+        if frames:
+            return pd.DataFrame(frames)
     m = md_dir / "analysis" / "metrics.csv"
     if m.exists():
         df = pd.read_csv(m).rename(
             columns={"psa3d_A2": "psa3d", "rmsd_A": "rmsd", "rg_A": "rg"})
+        missing = [d for d in ("rg", "sasa", "intra_hbond") if d not in df.columns]
+        if missing:
+            extra = _traj_descriptors(md_dir)
+            if extra:
+                for k, arr in extra.items():
+                    df[k] = np.asarray(arr)[: len(df)]
         return df
     return None
 
