@@ -18,7 +18,7 @@ import pandas as pd
 
 from ..features import descriptors3d
 from ..md.analyze import _solute_indices
-from . import render3d
+from . import project, render3d
 
 _METRICS = ["psa3d", "rg", "intra_hbond", "sasa", "rmsd"]
 # metrics.csv column -> viz field
@@ -40,7 +40,8 @@ def _stats(v: np.ndarray) -> dict:
 
 
 def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
-                   render_angles=None) -> dict:
+                   render_angles=None, animate: bool = True,
+                   animation_max_frames: int = 250, projection_decimals: int = 2) -> dict:
     md_dir = Path(md_dir)
     metrics = pd.read_csv(md_dir / "analysis" / "metrics.csv").rename(columns=_RENAME)
 
@@ -68,11 +69,28 @@ def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
     for k, arr in extra.items():
         metrics[k] = arr[: len(metrics)]
 
-    # frames array
+    # cluster / summary stats use the FULL frame set (below); the animation and
+    # the per-frame `frames` array share one SUBSAMPLED index set so they stay 1:1.
+    angles = render_angles or render3d._DEFAULT_ANGLES
+    topology = projection = None
+    frame_idx = list(range(len(metrics)))
+    if animate:
+        traj.superpose(traj, 0)   # remove global tumbling (stable playback)
+        frame_idx = project.subsample_indices(traj.n_frames, animation_max_frames)
+        coords = project.project(traj.xyz[frame_idx], angles, decimals=projection_decimals)
+        top = traj.topology
+        topology = {
+            "atom_elements": [a.element.symbol if a.element else "C" for a in top.atoms],
+            "bonds": [[b[0].index, b[1].index] for b in top.bonds],
+        }
+        projection = {"angles": [list(a) for a in angles],
+                      "decimals": projection_decimals, "coords": coords}
+
+    # frames array (subsampled to the animation frame set → 1:1 with projection)
     fields = ["frame", "time_ps", "tsne1", "tsne2", "pc1", "pc2", "cluster",
               "psa3d", "rg", "intra_hbond", "sasa", "rmsd"]
     have = [f for f in fields if f in metrics.columns]
-    frames = metrics[have].to_dict(orient="records")
+    frames = metrics.iloc[frame_idx][have].to_dict(orient="records")
 
     # clusters: rep image + mean metrics
     eq = metrics[metrics["frame"] >= equilibration_frame]
@@ -102,8 +120,9 @@ def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
     if ens.exists():
         summary["pca_explained_variance"] = json.loads(ens.read_text()).get("pca_explained_variance", [])
 
-    return {
-        "meta": {"mol_id": mol_id, "smiles": smiles, "n_frames": int(len(metrics)),
+    data = {
+        "meta": {"mol_id": mol_id, "smiles": smiles,
+                 "n_frames": int(len(frames)), "n_frames_total": int(len(metrics)),
                  "equilibration_frame": int(equilibration_frame),
                  "save_interval_ps": save_ps, "versions": _versions()},
         "frames": frames,
@@ -118,6 +137,10 @@ def build_viz_data(md_dir: Path, *, equilibration_frame: int = 0,
             "rmsd": {"definition": "RMSD to prep reference (heavy atoms)", "unit": "A"},
         },
     }
+    if topology is not None:
+        data["topology"] = topology
+        data["projection"] = projection
+    return data
 
 
 def write_viz_data(md_dir: Path, out_path: Path | None = None, **kw) -> Path:

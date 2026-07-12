@@ -70,6 +70,14 @@
     </div>
   </section>
 
+  <section class="panel full" id="molpanel" style="display:none">
+    <h2>Live conformation <span class="muted" style="font-weight:400">— both view angles, current frame</span></h2>
+    <div class="row" style="justify-content:center;gap:18px">
+      <canvas id="mol0" width="300" height="300" style="max-width:46%"></canvas>
+      <canvas id="mol1" width="300" height="300" style="max-width:46%"></canvas>
+    </div>
+  </section>
+
   <section class="panel full">
     <h2>Descriptor time series <span class="row" style="float:right">
       <label>metric <select id="metric"></select></label></h2>
@@ -160,15 +168,45 @@ function select(i){
   const ri=document.getElementById("repimg"); ri.innerHTML="";
   const cl=clusterOf(f.cluster);
   if(cl){ cl.images.forEach(src=>{ const im=new Image(); im.src=src; ri.appendChild(im); }); }
-  drawScatter(); drawChart();
+  drawScatter(); drawChart(); drawMolecule(cur);   // (a)(b)(c)(d) — single source of truth
 }
 
-// ---------- time slider + play ----------
+// ---------- live molecule panel (2D projection playback) ----------
+const ELEM = {C:"#3a3a3a",N:"#3050f0",O:"#e01010",H:"#c8c8c8",S:"#e6c000",
+              P:"#ff8000",F:"#30c020",Cl:"#20b020",Br:"#a52a2a",I:"#940094"};
+const TOPO = DATA.topology, PROJ = DATA.projection;
+const molCv = [document.getElementById("mol0"), document.getElementById("mol1")];
+function drawMolecule(i){
+  if(!PROJ || !TOPO) return;
+  const els = TOPO.atom_elements, bonds = TOPO.bonds;
+  PROJ.coords.forEach((byFrame, ang)=>{
+    const cv=molCv[ang], g=cv.getContext("2d"), W=cv.width, H=cv.height, m=18;
+    const P=byFrame[i]; if(!P) return;
+    const mapx=x=>W/2 + x*(W/2-m), mapy=y=>H/2 - y*(H/2-m);
+    g.clearRect(0,0,W,H);
+    // bonds first (behind atoms)
+    g.strokeStyle="#9aa1ab"; g.lineWidth=2;
+    bonds.forEach(([a,b])=>{ g.beginPath(); g.moveTo(mapx(P[a][0]),mapy(P[a][1]));
+      g.lineTo(mapx(P[b][0]),mapy(P[b][1])); g.stroke(); });
+    // atoms: depth z (0 back .. 1 front) -> size + alpha, drawn back-to-front
+    const order=[...els.keys()].sort((p,q)=>P[p][2]-P[q][2]);
+    order.forEach(k=>{ const z=P[k][2]; g.globalAlpha=0.45+0.55*z;
+      g.fillStyle=ELEM[els[k]]||"#888"; g.beginPath();
+      g.arc(mapx(P[k][0]),mapy(P[k][1]), (els[k]==="H"?3:5.5)*(0.7+0.5*z),0,7); g.fill(); });
+    g.globalAlpha=1;
+  });
+}
+if(PROJ){ document.getElementById("molpanel").style.display=""; }
+
+// ---------- time slider + play (requestAnimationFrame) ----------
 const slider=document.getElementById("slider"); slider.max=F.length-1;
 slider.oninput=e=>select(+e.target.value);
+let rafId=null, lastT=0;
 document.getElementById("play").onclick=function(){
-  if(playing){ clearInterval(playing); playing=null; this.textContent="▶"; }
-  else { this.textContent="⏸"; playing=setInterval(()=>select((cur+1)%F.length),120); }
+  if(rafId){ cancelAnimationFrame(rafId); rafId=null; this.textContent="▶"; return; }
+  this.textContent="⏸";
+  const step=(t)=>{ if(t-lastT>90){ lastT=t; select((cur+1)%F.length); } rafId=requestAnimationFrame(step); };
+  rafId=requestAnimationFrame(step);
 };
 
 // ---------- time-series chart (canvas) ----------
