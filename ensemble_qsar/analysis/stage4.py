@@ -325,3 +325,141 @@ def plot_distribution_stack(cases: list[dict], out_path: Path, *, show_tpsa: boo
     fig.savefig(out_path, dpi=130)
     plt.close(fig)
     return Path(out_path)
+
+
+# --- Analysis 3: monotonic-trend statistic + summary report --------------------
+# We test the qualitative hypothesis ("per-molecule descriptor dispersion grows
+# with flexibility") with Spearman rank correlation against the CONTINUOUS
+# flexibility axes — not pairwise t-tests across flex_class. flex_class is a
+# binned version of a continuous quantity; a rank correlation on the continuous
+# axis uses every molecule, needs no normality/equal-variance assumption, and
+# tests monotonicity directly. Reported as a descriptive association in a small
+# exploratory set, NOT as validation of a predictive relationship.
+
+def spearman_trends(table: pd.DataFrame, *, dispersion: str = "std",
+                    descriptors=("psa3d", "rg"),
+                    axes=("kier_flexibility", "n_rotatable_bonds")) -> pd.DataFrame:
+    """Spearman ρ (+ p, n) of per-molecule dispersion vs each continuous
+    flexibility axis. n < 3 rows report NaN (too few to correlate)."""
+    from scipy.stats import spearmanr
+
+    rows = []
+    for desc in descriptors:
+        ycol = f"{desc}_{dispersion}"
+        if ycol not in table.columns:
+            continue
+        for ax in axes:
+            if ax not in table.columns:
+                continue
+            sub = table[[ax, ycol]].apply(pd.to_numeric, errors="coerce").dropna()
+            n = int(len(sub))
+            if n < 3:
+                rho = p = float("nan")
+            else:
+                rho, p = spearmanr(sub[ax], sub[ycol])
+            rows.append({"descriptor": desc, "dispersion": dispersion, "axis": ax,
+                         "n": n, "spearman_rho": float(rho), "p_value": float(p)})
+    return pd.DataFrame(rows)
+
+
+def class_dispersion_summary(table: pd.DataFrame, *, dispersion: str = "std",
+                             descriptors=("psa3d", "rg")) -> pd.DataFrame:
+    """Per-flex_class count / mean / median / std of each descriptor's
+    per-molecule dispersion (descriptive only)."""
+    frames = []
+    for desc in descriptors:
+        col = f"{desc}_{dispersion}"
+        if col not in table.columns:
+            continue
+        g = (table.groupby("flex_class", observed=True)[col]
+             .agg(["count", "mean", "median", "std"]).reset_index())
+        g.insert(0, "descriptor", desc)
+        frames.append(g)
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+
+
+def _df_to_md(df: pd.DataFrame, floatfmt: str = "{:.3f}") -> str:
+    """Minimal Markdown table (avoids the optional `tabulate` dependency)."""
+    def cell(x):
+        if isinstance(x, float):
+            return "n/a" if not np.isfinite(x) else floatfmt.format(x)
+        return str(x)
+    cols = list(df.columns)
+    head = "| " + " | ".join(cols) + " |"
+    sep = "| " + " | ".join("---" for _ in cols) + " |"
+    body = ["| " + " | ".join(cell(v) for v in row) + " |"
+            for row in df.itertuples(index=False)]
+    return "\n".join([head, sep, *body])
+
+
+def write_report(table: pd.DataFrame, out_dir: Path, *, dispersion: str = "std",
+                 descriptors=("psa3d", "rg")) -> dict:
+    """Analysis 3: write the class summary, Spearman trends, and a limitations
+    report. Returns the paths written. No model is fit; text is deliberately
+    hedged to the exploratory scope."""
+    out_dir = Path(out_dir)
+    trends = spearman_trends(table, dispersion=dispersion, descriptors=descriptors)
+    summary = class_dispersion_summary(table, dispersion=dispersion, descriptors=descriptors)
+    trends_csv = out_dir / "analysis3_spearman_trends.csv"
+    summary_csv = out_dir / "analysis3_class_summary.csv"
+    trends.to_csv(trends_csv, index=False)
+    summary.to_csv(summary_csv, index=False)
+
+    n_mol = int(len(table))
+    psa_row = trends[(trends["descriptor"] == "psa3d") &
+                     (trends["axis"] == "kier_flexibility")]
+    psa_txt = ""
+    if len(psa_row):
+        r = psa_row.iloc[0]
+        psa_txt = (f"3D-PSA dispersion vs Kier φ: Spearman ρ = {r['spearman_rho']:.2f} "
+                   f"(p = {r['p_value']:.2g}, n = {int(r['n'])}).")
+
+    md = f"""# Stage 4 — Analysis 3: dispersion-vs-flexibility summary
+
+*Exploratory, descriptive proof-of-concept. No model is trained; no predictive
+accuracy, R², or per-cluster prediction is claimed.*
+
+Completed molecules: **{n_mol}**.
+
+## Main qualitative finding
+Across the MD ensemble, a molecule's per-frame descriptor distribution has a
+finite **width**, and that width tends to grow with flexibility. We read this
+width as a proxy for the *representational uncertainty* of summarising the
+molecule by one static value — nothing more. {psa_txt}
+
+## Per-flex_class dispersion ({dispersion})
+{_df_to_md(summary)}
+
+## Monotonic-trend test (Spearman rank correlation)
+Rank correlation of per-molecule dispersion against the **continuous**
+flexibility axes. Chosen over pairwise t-tests across `flex_class` because the
+class is a binned continuous quantity: a rank correlation uses every molecule,
+assumes no normality/equal variance, and tests monotonicity directly.
+
+{_df_to_md(trends)}
+
+## Limitations (read before interpreting)
+- **Small, exploratory set (n = {n_mol}).** These are associations in a PoC
+  panel, not a validated structure–property relationship. No hold-out, no model.
+- **Dispersion ≠ prediction error.** The distribution width is a
+  representational-uncertainty proxy. We deliberately do **not** claim which MD
+  frame/cluster corresponds to the experimental Caco-2 value, nor pick a
+  "correct" conformer post hoc.
+- **Caco-2 logPapp is shown as a future prediction target only** — annotated
+  next to each molecule, never regressed here.
+- **flex_class is a discretised axis.** The trend statistic uses the continuous
+  Kier φ / rotatable-bond count; class means are shown for description only and
+  the class bins are unbalanced.
+- **Rg dispersion has limited per-frame coverage** (Rg is present in fewer
+  molecules' per-frame tables; see the `n` column). Treat Rg trends as
+  weaker-evidence than 3D-PSA and prefer 3D-PSA as the primary axis.
+- **Single force field, single replica, finite sampling.** Distribution widths
+  reflect the achieved MD sampling, not a converged equilibrium ensemble.
+- **Static 3D-PSA** is the polar SASA of one prep conformer computed with the
+  *same* method/units as the ensemble (loaded with its prmtop so polar H are
+  counted); it is a single-conformer reference, not an experimental quantity.
+"""
+    report_md = out_dir / "analysis3_report.md"
+    report_md.write_text(md)
+    return {"report": report_md, "trends_csv": trends_csv, "summary_csv": summary_csv,
+            "trends": trends}

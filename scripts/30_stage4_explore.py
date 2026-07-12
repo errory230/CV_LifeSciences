@@ -84,6 +84,14 @@ def main() -> None:
             g = table.groupby("flex_class", observed=True)[col].agg(["count", "mean"])
             print(f"\nmean per-frame {d} std by flex_class:\n{g.to_string()}")
 
+    # Analysis 3: monotonic-trend statistic (Spearman) + summary/limitations report
+    rep = stage4.write_report(table, args.outdir)
+    print("\nAnalysis 3: Spearman trend (dispersion std vs continuous flexibility)")
+    print(rep["trends"].to_string(index=False))
+    print(f"\nAnalysis 3 -> {rep['report']}")
+    print(f"           -> {rep['summary_csv']}")
+    print(f"           -> {rep['trends_csv']}")
+
 
 if __name__ == "__main__":
     main()
