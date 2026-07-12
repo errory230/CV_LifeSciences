@@ -17,7 +17,7 @@
   .card .k { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
   .card .v { font-size:18px; font-weight:600; }
   .card .v small { font-weight:400; color:var(--muted); font-size:12px; }
-  main { display:grid; grid-template-columns:1fr 320px; gap:14px; padding:14px 20px; }
+  main { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:14px; padding:14px 20px; }
   @media (max-width:840px){ main{ grid-template-columns:1fr; } }
   .panel { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
   .panel h2 { margin:0 0 8px; font-size:13px; color:var(--muted); font-weight:600; }
@@ -60,8 +60,8 @@
     <div id="selinfo">Click a point (or use the slider).</div>
     <table class="metrics-tbl" id="seltbl"></table>
     <div class="row" id="molrow" style="justify-content:center;gap:8px;margin-top:8px">
-      <canvas id="mol0" width="260" height="260" style="max-width:48%;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
-      <canvas id="mol1" width="260" height="260" style="max-width:48%;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
+      <canvas id="mol0" width="320" height="320" style="width:48%;height:auto;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
+      <canvas id="mol1" width="320" height="320" style="width:48%;height:auto;background:#fbfcfe;border:1px solid var(--line);border-radius:8px"></canvas>
     </div>
   </aside>
 
