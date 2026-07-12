@@ -33,3 +33,7 @@ data/md_dryrun/
 
 # Stage 3 demo outputs (regenerable)
 data/md_demo/
+
+# Stage 4 preview data + results (regenerable)
+data/md_s4preview/
+results/
