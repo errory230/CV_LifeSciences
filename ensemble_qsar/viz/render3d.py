@@ -11,9 +11,14 @@ from __future__ import annotations
 
 import base64
 import io
+import os
 from pathlib import Path
 
-import matplotlib
+# Force a headless backend BEFORE importing matplotlib. Colab/IPython sets
+# MPLBACKEND to an inline backend that is invalid under a plain `python` process,
+# which makes `import matplotlib` itself raise; overriding the env var avoids it.
+os.environ["MPLBACKEND"] = "Agg"
+import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402

@@ -206,6 +206,8 @@ def _write_csv(path: Path, cols: dict) -> None:
 
 
 try:
+    import os as _os
+    _os.environ["MPLBACKEND"] = "Agg"  # override Colab/IPython inline backend
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
