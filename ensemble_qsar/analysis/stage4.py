@@ -110,6 +110,13 @@ def detect_and_tabulate(md_root: Path, stage1_csv: Path, *, burnin_frac: float =
     keep = [c for c in ("mol_id", "n_rotatable_bonds", "kier_flexibility",
                         "flex_class", "label", "tpsa", "mw") if c in s1.columns]
     s1 = s1[keep]
+    # Guard against mol_id collisions in the Stage-1 table: two distinct
+    # molecules sharing a short mol_id would fan the left-merge into duplicate
+    # rows (one MD dir -> two label rows), corrupting the per-molecule join.
+    dups = s1["mol_id"][s1["mol_id"].duplicated(keep=False)].unique().tolist()
+    if dups:
+        print(f"warning: dropping duplicate Stage-1 mol_id(s) {dups} (kept first).")
+        s1 = s1.drop_duplicates(subset="mol_id", keep="first")
 
     rows, pending = [], []
     for d in sorted(p for p in md_root.iterdir() if p.is_dir() and not p.name.startswith("_")):
@@ -191,6 +198,8 @@ def case_study(md_root: Path, table: pd.DataFrame, *, mol_ids=None, n_each: int 
         if pf is None or "psa3d" not in pf.columns:
             continue
         r = row.loc[mid]
+        if isinstance(r, pd.DataFrame):
+            r = r.iloc[0]
         cases.append({
             "mol_id": mid, "flex_class": str(r.get("flex_class")),
             "n_rot": float(r.get("n_rotatable_bonds", float("nan"))),
@@ -241,13 +250,15 @@ def distribution_cases(md_root: Path, table: pd.DataFrame, *, prep_root: Path | 
     dirs = _dir_for_mol_ids(md_root)
     row = table.set_index("mol_id")
     cases = []
-    for mid in table["mol_id"]:
+    for mid in dict.fromkeys(table["mol_id"]):   # unique, order-preserving
         if mid not in dirs or mid not in row.index:
             continue
         pf = _per_frame(dirs[mid])
         if pf is None or "psa3d" not in pf.columns:
             continue
         r = row.loc[mid]
+        if isinstance(r, pd.DataFrame):   # residual duplicate -> take first
+            r = r.iloc[0]
         static3d = static_reference_psa3d(Path(prep_root) / _safe(mid)) if prep_root else None
         cases.append({
             "mol_id": mid, "flex_class": str(r.get("flex_class")),
