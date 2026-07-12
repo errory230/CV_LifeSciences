@@ -90,7 +90,8 @@ def _per_frame(md_dir: Path) -> pd.DataFrame | None:
         return pd.DataFrame(frames) if frames else None
     m = md_dir / "analysis" / "metrics.csv"
     if m.exists():
-        df = pd.read_csv(m).rename(columns={"psa3d_A2": "psa3d", "rmsd_A": "rmsd"})
+        df = pd.read_csv(m).rename(
+            columns={"psa3d_A2": "psa3d", "rmsd_A": "rmsd", "rg_A": "rg"})
         return df
     return None
 
@@ -147,6 +148,8 @@ def plot_analysis1(table: pd.DataFrame, out_path: Path, *,
     (each reference-free, so comparable across molecules), columns = the two
     flexibility axes (rotatable-bond count and Kier φ). One point = one molecule.
     """
+    from scipy.stats import spearmanr
+
     descriptors = [d for d in descriptors if f"{d}_{dispersion}" in table.columns]
     nrow = len(descriptors)
     fig, axes = plt.subplots(nrow, 2, figsize=(11, 4.2 * nrow), squeeze=False)
@@ -160,6 +163,13 @@ def plot_analysis1(table: pd.DataFrame, out_path: Path, *,
                 if len(sub):
                     ax.scatter(sub[xcol], sub[ycol], s=70, alpha=0.85, color=FLEX_COLOR[cls],
                                edgecolor="#333", linewidth=0.5, label=cls)
+            # Spearman ρ (monotonic-trend statistic) annotated on the panel itself
+            fit = table[[xcol, ycol]].apply(pd.to_numeric, errors="coerce").dropna()
+            if len(fit) >= 3:
+                rho, p = spearmanr(fit[xcol], fit[ycol])
+                ax.text(0.03, 0.97, f"Spearman ρ = {rho:.2f}\np = {p:.2g}  (n = {len(fit)})",
+                        transform=ax.transAxes, va="top", ha="left", fontsize=9,
+                        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="#999", alpha=0.85))
             ax.set_xlabel(xlabel)
             ax.set_ylabel(f"per-frame {_UNIT[desc]} {dispersion}")
             ax.grid(alpha=0.25)
@@ -414,6 +424,19 @@ def write_report(table: pd.DataFrame, out_dir: Path, *, dispersion: str = "std",
         psa_txt = (f"3D-PSA dispersion vs Kier φ: Spearman ρ = {r['spearman_rho']:.2f} "
                    f"(p = {r['p_value']:.2g}, n = {int(r['n'])}).")
 
+    # Rg per-frame coverage relative to 3D-PSA — the caveat only applies when Rg
+    # is actually present in fewer molecules' per-frame tables.
+    n_psa = int(table[f"psa3d_{dispersion}"].notna().sum()) if f"psa3d_{dispersion}" in table else 0
+    n_rg = int(table[f"rg_{dispersion}"].notna().sum()) if f"rg_{dispersion}" in table else 0
+    if n_rg and n_rg < n_psa:
+        rg_bullet = (f"- **Rg dispersion has thinner per-frame coverage** "
+                     f"({n_rg}/{n_psa} molecules vs 3D-PSA; see the `n` column). "
+                     f"Treat Rg trends as weaker evidence and keep 3D-PSA as the primary axis.")
+    else:
+        rg_bullet = ("- **Rg is a supporting axis.** 3D-PSA is the permeability-relevant "
+                     "(chameleon) descriptor and remains the primary axis; the Rg trend is "
+                     "reported as corroborating evidence in the same direction.")
+
     md = f"""# Stage 4 — Analysis 3: dispersion-vs-flexibility summary
 
 *Exploratory, descriptive proof-of-concept. No model is trained; no predictive
@@ -450,9 +473,7 @@ assumes no normality/equal variance, and tests monotonicity directly.
 - **flex_class is a discretised axis.** The trend statistic uses the continuous
   Kier φ / rotatable-bond count; class means are shown for description only and
   the class bins are unbalanced.
-- **Rg dispersion has limited per-frame coverage** (Rg is present in fewer
-  molecules' per-frame tables; see the `n` column). Treat Rg trends as
-  weaker-evidence than 3D-PSA and prefer 3D-PSA as the primary axis.
+{rg_bullet}
 - **Single force field, single replica, finite sampling.** Distribution widths
   reflect the achieved MD sampling, not a converged equilibrium ensemble.
 - **Static 3D-PSA** is the polar SASA of one prep conformer computed with the
