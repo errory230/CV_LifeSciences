@@ -26,8 +26,38 @@ os.environ["MPLBACKEND"] = "Agg"   # override Colab/IPython inline backend
 import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import mdtraj as md  # noqa: E402
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
+
+from ..md.analyze import _polar_atom_mask  # noqa: E402
+
+
+def _safe(s: str) -> str:
+    return "".join(c if c.isalnum() or c in "-_." else "_" for c in s)
+
+
+def static_reference_psa3d(prep_dir: Path) -> float | None:
+    """3D-PSA (polar SASA, Å²) of the single prep conformer — the value a static
+    pipeline would use. Same method/units as the ensemble per-frame 3D-PSA.
+
+    The conformer PDB is loaded *with its prep prmtop as topology* so bonds (and
+    hence polar hydrogens) are present: a bare ``md.load(pdb)`` on a non-standard
+    ligand yields zero bonds, silently dropping every polar H and biasing the
+    value low relative to the prmtop-based ensemble path."""
+    prep_dir = Path(prep_dir)
+    for pdb, prmtop in (("ligand_ref.pdb", "ligand_gas.prmtop"),
+                        ("peptide_capped.pdb", "peptide_gas.prmtop")):
+        p, top = prep_dir / pdb, prep_dir / prmtop
+        if p.exists() and top.exists():
+            try:
+                t = md.load(str(p), top=str(top))
+                sasa = md.shrake_rupley(t, mode="atom")[0]
+                polar = _polar_atom_mask(t.topology, np.arange(t.n_atoms))
+                return float(sasa[polar].sum() * 100.0)
+            except Exception:  # noqa: BLE001
+                return None
+    return None
 
 # Reference-free descriptors only — comparable across molecules. RMSD is
 # excluded on purpose: it is measured against each molecule's own reference
@@ -199,6 +229,87 @@ def plot_analysis2(cases: list[dict], out_path: Path) -> Path:
                  "(rigid = narrow → static representative; flexible = broad → static loses it)",
                  fontsize=11)
     ax.grid(axis="x", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=130)
+    plt.close(fig)
+    return Path(out_path)
+
+
+def distribution_cases(md_root: Path, table: pd.DataFrame, *, prep_root: Path | None = None) -> list[dict]:
+    """All completed molecules, sorted by Kier φ ascending: per-frame 3D-PSA +
+    static single-conformer 3D-PSA (from prep) + 2D-TPSA + Caco-2 label."""
+    dirs = _dir_for_mol_ids(md_root)
+    row = table.set_index("mol_id")
+    cases = []
+    for mid in table["mol_id"]:
+        if mid not in dirs or mid not in row.index:
+            continue
+        pf = _per_frame(dirs[mid])
+        if pf is None or "psa3d" not in pf.columns:
+            continue
+        r = row.loc[mid]
+        static3d = static_reference_psa3d(Path(prep_root) / _safe(mid)) if prep_root else None
+        cases.append({
+            "mol_id": mid, "flex_class": str(r.get("flex_class")),
+            "kier": float(r.get("kier_flexibility", float("nan"))),
+            "psa3d_frames": pf["psa3d"].to_numpy(float),
+            "static_psa3d": static3d,
+            "static_tpsa": float(r.get("tpsa", float("nan"))),
+            "label": float(r.get("label", float("nan"))),
+        })
+    cases = [c for c in cases if np.isfinite(c["kier"])]
+    return sorted(cases, key=lambda c: c["kier"])
+
+
+def plot_distribution_stack(cases: list[dict], out_path: Path, *, show_tpsa: bool = False) -> Path:
+    """All molecules stacked vertically by Kier φ (rigid bottom → flexible top):
+    a violin of each molecule's per-frame 3D-PSA + its static single-conformer
+    3D-PSA marker (red edge when it falls outside the ensemble 95% band). The
+    ensemble distribution visibly widens upward; the single static point leaves
+    the distribution for flexible molecules."""
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+
+    n = len(cases)
+    fig, ax = plt.subplots(figsize=(9.5, 1.8 + 0.42 * n))
+    pos = list(range(n))
+    vp = ax.violinplot([c["psa3d_frames"] for c in cases], positions=pos,
+                       vert=False, widths=0.85, showextrema=False)
+    for body, c in zip(vp["bodies"], cases):
+        body.set_facecolor(FLEX_COLOR.get(c["flex_class"], "#999"))
+        body.set_alpha(0.55); body.set_edgecolor("#444"); body.set_linewidth(0.4)
+
+    for i, c in enumerate(cases):
+        s = c["static_psa3d"]
+        if s is not None:
+            lo, hi = np.percentile(c["psa3d_frames"], [2.5, 97.5])
+            outside = s < lo or s > hi
+            ax.scatter([s], [i], marker="D", s=52, zorder=5, color="#111",
+                       edgecolor="#d7301f" if outside else "#111",
+                       linewidth=1.8 if outside else 0.5)
+        if show_tpsa and np.isfinite(c["static_tpsa"]):
+            ax.scatter([c["static_tpsa"]], [i], marker="o", s=26, color="#8a8f98", zorder=4)
+        xr = max(c["psa3d_frames"].max(), s or 0)
+        ax.text(xr + 4, i, f"logPapp={c['label']:.2f}", va="center", fontsize=7, color="#666")
+
+    ax.set_yticks(pos)
+    ax.set_yticklabels([f"{c['mol_id'][:22]}  (φ={c['kier']:.1f})" for c in cases], fontsize=7)
+    ax.set_xlabel("3D-PSA (Å²) — violin: MD ensemble per-frame distribution")
+    ax.set_ylabel("molecules · Kier φ increasing ↑ (rigid → flexible)")
+    handles = [Patch(facecolor=FLEX_COLOR[k], alpha=0.55, label=k) for k in FLEX_ORDER]
+    handles.append(Line2D([0], [0], marker="D", color="w", markerfacecolor="#111",
+                          markersize=8, label="static single-conformer 3D-PSA"))
+    handles.append(Line2D([0], [0], marker="D", color="w", markerfacecolor="#111",
+                          markeredgecolor="#d7301f", markeredgewidth=1.6, markersize=8,
+                          label="… outside ensemble 95% band"))
+    if show_tpsa:
+        handles.append(Line2D([0], [0], marker="o", color="w", markerfacecolor="#8a8f98",
+                              markersize=7, label="2D-TPSA (different scale)"))
+    ax.legend(handles=handles, fontsize=8, loc="lower right", framealpha=0.92)
+    ax.set_title("Ensemble 3D-PSA distribution widens with flexibility; a single static\n"
+                 "conformer value (◆) leaves the distribution for flexible molecules",
+                 fontsize=11)
+    ax.grid(axis="x", alpha=0.2)
     fig.tight_layout()
     fig.savefig(out_path, dpi=130)
     plt.close(fig)

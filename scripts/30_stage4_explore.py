@@ -18,6 +18,8 @@ import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
@@ -31,11 +33,15 @@ def main() -> None:
     ap.add_argument("--stage1", type=Path,
                     default=ROOT / "data/processed/caco2_wang/representative_set.csv")
     ap.add_argument("--outdir", type=Path, default=ROOT / "results/stage4")
+    ap.add_argument("--prep-root", type=Path, default=ROOT / "data/prep/caco2",
+                    help="Stage-2a prep dirs (for the static single-conformer 3D-PSA)")
     ap.add_argument("--burnin-frac", type=float, default=0.0,
                     help="discard this fraction of leading frames as burn-in")
     ap.add_argument("--case-molecules", nargs="+", default=None,
                     help="explicit mol_ids for Analysis 2 (default: auto rigid+flexible)")
     ap.add_argument("--n-each", type=int, default=2, help="Analysis 2 molecules per extreme")
+    ap.add_argument("--show-tpsa", action="store_true",
+                    help="also overlay static 2D-TPSA (note: different scale from 3D-PSA)")
     args = ap.parse_args()
     args.outdir.mkdir(parents=True, exist_ok=True)
 
@@ -57,6 +63,19 @@ def main() -> None:
     if cases:
         png2 = stage4.plot_analysis2(cases, args.outdir / "analysis2_casestudy_distributions.png")
         print(f"Analysis 2 -> {png2}  (cases: {', '.join(c['mol_id'] for c in cases)})")
+
+    # Analysis 2 (all molecules): 3D-PSA distribution stack sorted by Kier φ, with
+    # the static single-conformer 3D-PSA overlaid (same units as the ensemble).
+    dcases = stage4.distribution_cases(args.md_root, table, prep_root=args.prep_root)
+    if dcases:
+        png2b = stage4.plot_distribution_stack(
+            dcases, args.outdir / "analysis2_distribution_stack.png", show_tpsa=args.show_tpsa)
+        n_static = sum(c["static_psa3d"] is not None for c in dcases)
+        n_out = sum(c["static_psa3d"] is not None and
+                    not (np.percentile(c["psa3d_frames"], 2.5) <= c["static_psa3d"]
+                         <= np.percentile(c["psa3d_frames"], 97.5)) for c in dcases)
+        print(f"Analysis 2b -> {png2b}  ({len(dcases)} molecules, "
+              f"{n_static} with static 3D-PSA, {n_out} static point outside 95% band)")
 
     # quick text preview by flex class
     for d in ("psa3d", "rg"):
