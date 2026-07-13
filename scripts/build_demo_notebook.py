@@ -155,11 +155,16 @@ transitions (prep · MD · report) stream above the bar. Every stage is
 resume-safe, so re-running continues from the last checkpoint (tick `FORCE` to
 start clean)."""),
     code("""
-import threading, time, json, hashlib
+import threading, time, json
 from pathlib import Path
-from tqdm.auto import tqdm
 from rdkit import Chem
 from ensemble_qsar.cli import orchestrate
+# plain text tqdm (NOT tqdm.auto) — the widget/notebook bar needs ipywidgets and
+# can raise 'tqdm object has no attribute container' in a restarted Colab kernel.
+try:
+    from tqdm import tqdm
+except Exception:
+    tqdm = None
 
 mol = Chem.MolFromSmiles(SMILES)
 assert mol is not None, f"invalid SMILES: {SMILES!r}"
@@ -175,35 +180,38 @@ overrides = {k: v for k, v in dict(
     pH=PH, production_ns=PRODUCTION_NS, n_frames=N_FRAMES,
     n_clusters=N_CLUSTERS, platform="CUDA").items() if v is not None}
 
-def _log(m): tqdm.write(str(m))
-
 holder = {}
 def _worker():
     try:
         holder["res"] = orchestrate.run_one(
             canonical, name=NAME or None, outdir=outdir,
-            overrides=overrides, force=FORCE, log=_log)
+            overrides=overrides, force=FORCE, log=print)  # logs stream as plain text
     except Exception as e:  # surfaced below
         holder["err"] = e
 
 print(f"▶ {mol_id}  ({canonical})")
 t = threading.Thread(target=_worker); t.start()
 
-pbar, seen = tqdm(total=100, desc="MD production", unit="%"), 0
+# live production bar — purely cosmetic; wrapped so it can NEVER break the run
+pbar = tqdm(total=100, desc="MD production", unit="%") if tqdm else None
+seen = 0
 while t.is_alive():
-    if prog_f.exists():
-        try:
+    try:
+        if prog_f.exists():
             d = json.loads(prog_f.read_text())
             pct = min(100, int(100 * d.get("steps_done", 0) / max(1, d.get("target", 1))))
-            if pct > seen:
+            if pbar is not None and pct > seen:
                 pbar.update(pct - seen); seen = pct
-        except Exception:
-            pass
+    except Exception:
+        pass
     time.sleep(2)
 t.join()
-if seen < 100:
-    pbar.update(100 - seen)
-pbar.close()
+if pbar is not None:
+    try:
+        if seen < 100: pbar.update(100 - seen)
+        pbar.close()
+    except Exception:
+        pass
 
 res = holder.get("res")
 if res is None or getattr(res, "status", "") != "ok":
