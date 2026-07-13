@@ -117,6 +117,13 @@ python run.py "CCO" --production-ns 50 --n-frames 500 --force
 Batch runs also write `summary.csv` and regenerate the `index.html` hub. See
 [`docs/CLI.md`](docs/CLI.md).
 
+**One-shot demo notebook.** `notebooks/demo_pipeline_colab.ipynb` is the
+interactive counterpart for a single molecule on a Colab GPU: type a SMILES in a
+form, *Run all*, and it goes prep → MD → report with a **live production progress
+bar** and renders the self-contained explorer inline. Setup uses `micromamba`
+for the AmberTools binaries (no kernel restart). Regenerate with
+`python scripts/build_demo_notebook.py`.
+
 ## Stage 3 — Ensemble descriptors + explorer (implemented)
 
 `ensemble_qsar/features/` aggregates each MD ensemble into a per-molecule QSAR
