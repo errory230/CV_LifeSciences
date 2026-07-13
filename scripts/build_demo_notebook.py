@@ -126,9 +126,12 @@ if not os.path.isdir("/content/CV_LifeSciences"):
     subprocess.run(["git", "clone", "-b", BRANCH,
                     f"https://{{auth}}github.com/{{REPO}}.git",
                     "/content/CV_LifeSciences"], check=True)
+else:  # already cloned — pull the latest fixes
+    subprocess.run(["git", "-C", "/content/CV_LifeSciences", "pull", "--ff-only"])
 if "/content/CV_LifeSciences" not in sys.path:
     sys.path.insert(0, "/content/CV_LifeSciences")
 print("setup complete — code under /content/CV_LifeSciences")
+print("  (if you just pulled a code fix, do Runtime ▸ Restart session, then Run all)")
 """),
 
     md("## 3 · Output location\nBy default results are written to `/content` (lost when the session ends). Tick `USE_DRIVE` in the form to persist them to Google Drive instead."),

@@ -43,7 +43,7 @@ def project(xyz: np.ndarray, angles, *, decimals: int = 2) -> list:
 
     # shared xy scale across both views so the molecule is the same size in each
     half = max(
-        (p[:, :, :2].reshape(-1, 2).ptp(axis=0).max() for p in projected),
+        (np.ptp(p[:, :, :2].reshape(-1, 2), axis=0).max() for p in projected),
         default=1.0,
     ) / 2 or 1.0
 
