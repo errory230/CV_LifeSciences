@@ -23,6 +23,9 @@ dependencies:
   - numpy
   - pandas
   - scikit-learn         # PCA / clustering in the later analysis stage
+  - matplotlib-base      # analysis PCA/t-SNE plots, structure render, Stage-4 figures
+  - scipy                # Spearman trend statistic (Stage 4)
+  - tqdm                 # optional batch progress bar (run.py)
   - pip
   - pip:
       - dimorphite-dl    # small-molecule protonation enumeration at target pH
